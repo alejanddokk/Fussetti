@@ -10,7 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="style.css">
-  <script defer src="app.js"></script>
+  <link rel="stylesheet" href="gallery.css">
+  <script type="module" src="app.js"></script>
 </head>
 <body>
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -44,7 +45,7 @@
           <div class="hero-halo" aria-hidden="true"></div>
           <span class="hero-type" aria-hidden="true">WAVE</span>
           <div class="floor" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div class="hero-bike"><img src="assets/honda.jpg" width="1010" height="401" fetchpriority="high" alt="Honda Wave 110 S, vista lateral"></div>
+          <div class="hero-bike"><span class="product-shot" data-shot="wave"><img src="assets/wave-110-transparent.webp" width="1991" height="789" fetchpriority="high" alt="Honda Wave 110 S, vista lateral"></span></div>
           <div class="stage-line" aria-hidden="true"></div>
           <a class="hero-caption" href="#coleccion" data-hero-product><span><small>MOTOS FUSSETTI</small><strong>Honda Wave 110 S</strong></span><span class="round-arrow" aria-hidden="true">↗</span></a>
         </div>
@@ -54,31 +55,37 @@
 
     <section class="collection section-pad" id="coleccion" aria-labelledby="collection-title">
       <div class="shell">
-        <div class="section-head reveal">
+        <div class="section-head collection-head reveal">
           <div><p class="eyebrow"><i></i> LA COLECCIÓN</p><h2 id="collection-title">Cada pieza,<br>su propio escenario.</h2></div>
-          <p>De la pantalla que reúne a todos a la moto que te lleva más lejos. Elegí una pieza y mirala de cerca.</p>
+          <p>Deslizá la colección. Llevá cada pieza al centro y acercate a sus detalles.</p>
         </div>
-        <div class="showroom reveal">
-          <div class="showroom-controls">
-            <h3>Explorá la selección</h3>
-            <div class="piece-list" aria-label="Seleccionar una pieza">
-              <button type="button" data-piece="0" aria-pressed="true"><span>01</span> Honda Wave <span>↗</span></button>
-              <button type="button" data-piece="1" aria-pressed="false"><span>02</span> Philips 50″ <span>↗</span></button>
-              <button type="button" data-piece="2" aria-pressed="false"><span>03</span> Aire RCA <span>↗</span></button>
-              <button type="button" data-piece="3" aria-pressed="false"><span>04</span> Viking X Jump <span>↗</span></button>
-              <button type="button" data-piece="4" aria-pressed="false"><span>05</span> Horno Kanji <span>↗</span></button>
-              <button type="button" data-piece="5" aria-pressed="false"><span>06</span> Heladera Kanji <span>↗</span></button>
+        <div class="gallery" data-scene="wave" aria-label="Colección interactiva">
+          <div class="gallery-stage">
+            <div class="gallery-hud"><span id="stage-count">01 / 06</span><button class="gallery-zoom" type="button" data-showroom-zoom>Ampliar foto <span aria-hidden="true">↗</span></button></div>
+            <div class="gallery-viewport" aria-label="Arrastrá o usá las flechas para recorrer la colección">
+              <div class="gallery-lamp" aria-hidden="true"></div>
+              <div class="gallery-floor" aria-hidden="true"></div>
+              <div class="gallery-word" aria-hidden="true">WAVE</div>
+              <div class="gallery-track">
+                <div class="gallery-item gallery-fallback">
+                  <span class="product-shot" data-shot="wave"><img src="assets/wave-110-transparent.webp" alt="Honda Wave 110 S" width="1991" height="789"></span>
+                </div>
+              </div>
             </div>
-            <div class="stage-controls"><button class="icon-button" type="button" data-step="-1" aria-label="Pieza anterior">←</button><span id="stage-count">01 / 06</span><button class="icon-button" type="button" data-step="1" aria-label="Pieza siguiente">→</button></div>
+            <p class="gallery-hint" aria-hidden="true"><span>←</span> <span>Arrastrá para explorar</span> <span>→</span></p>
           </div>
-          <div class="exhibit" data-scene="wave">
-            <div class="exhibit-grid" aria-hidden="true"></div>
-            <div class="exhibit-iris" aria-hidden="true"></div>
-            <div class="exhibit-visual"><span class="exhibit-word" aria-hidden="true">WAVE</span><div class="exhibit-image wave-mask"><img src="assets/honda.jpg" width="1010" height="401" alt="Honda Wave 110 S"></div></div>
-            <div class="exhibit-meta">
-              <div aria-live="polite"><p class="eyebrow" id="piece-category">Motos</p><h3 id="piece-title">Honda Wave 110 S</h3><p id="piece-sub">Tu próximo camino.</p></div>
-              <a id="piece-link" class="action light" href="./alternativa/#producto/honda-wave-110-s">Ver ficha <span aria-hidden="true">↗</span></a>
+          <div class="gallery-caption">
+            <div class="gallery-identity" aria-live="polite" aria-atomic="true">
+              <p class="eyebrow" id="piece-category">Motos</p>
+              <h3 id="piece-title">Honda Wave 110 S</h3>
+              <p id="piece-sub">Tu próximo camino.</p>
             </div>
+            <a id="piece-link" class="action" href="./alternativa/#producto/honda-wave-110-s">Ver ficha <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="gallery-nav">
+            <button class="icon-button" type="button" data-step="-1" aria-label="Pieza anterior">←</button>
+            <div class="gallery-thumbs" aria-label="Elegir una pieza por su foto"></div>
+            <button class="icon-button" type="button" data-step="1" aria-label="Pieza siguiente">→</button>
           </div>
         </div>
         <div class="collection-foot"><a class="text-link" href="./alternativa/#catalogo">Ver el catálogo completo <span aria-hidden="true">↗</span></a></div>
@@ -112,7 +119,7 @@
 
     <section class="support section-pad" id="servicios" aria-labelledby="support-title">
       <div class="shell support-layout reveal">
-        <div><p class="eyebrow"><i></i> FUSSETTI, CERCA TUYO</p><h2 id="support-title">Comprar es<br>el comienzo.</h2><p>Encontrá una sucursal, revisá el mantenimiento de tu moto o usá la guía para decidir qué llevar.</p></div>
+        <div><p class="eyebrow"><i></i> FUSSETTI, CERCA TUYO</p><h2 id="support-title">Comprar es<br>el comienzo.</h2><p class="support-copy">Encontrá una sucursal, revisá el mantenimiento de tu moto o usá la guía para decidir qué llevar.</p></div>
         <div class="support-links">
           <a href="./alternativa/#guia">Ayudame a elegir <span aria-hidden="true">↗</span></a>
           <a href="./alternativa/#sucursales">Encontrar sucursal <span aria-hidden="true">↗</span></a>
@@ -131,6 +138,10 @@
     </div>
   </footer>
 
+  <dialog class="home-dialog zoom-dialog" id="showroom-photo" aria-labelledby="showroom-photo-title">
+    <div class="home-dialog-head"><h2 id="showroom-photo-title">Foto del producto</h2><form method="dialog"><button class="icon-button" aria-label="Cerrar foto">×</button></form></div>
+    <div class="zoom-photo" data-zoom-photo></div>
+  </dialog>
   <dialog class="home-dialog" id="catalog-search" aria-labelledby="catalog-search-title">
     <div class="home-dialog-head"><h2 id="catalog-search-title">¿Qué estás buscando?</h2><form method="dialog"><button class="icon-button" aria-label="Cerrar búsqueda">×</button></form></div>
     <form action="./alternativa/" id="home-search-form" class="home-search-form" role="search">

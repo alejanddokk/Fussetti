@@ -1,9 +1,11 @@
+import { createGallery, productShot } from "./gallery.js";
+
 const shop = "./alternativa/";
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const desktopPointer = matchMedia("(pointer: fine) and (min-width: 741px)");
 
 const pieces = [
-  { scene: "wave", category: "Motos", title: "Honda Wave 110 S", word: "WAVE", description: "Tu próximo camino.", image: "honda.jpg", route: "#producto/honda-wave-110-s" },
+  { scene: "wave", category: "Motos", title: "Honda Wave 110 S", word: "WAVE", description: "Tu próximo camino.", image: "wave-110-transparent.webp", route: "#producto/honda-wave-110-s" },
   { scene: "philips", category: "TV y audio", title: "Smart TV Philips 50″", word: "PHILIPS", description: "Pantalla de 50″ · UHD 4K", image: "philips.jpg", route: "#producto/hogar-3-1" },
   { scene: "rca", category: "Climatización", title: "Aire acondicionado RCA", word: "RCA", description: "5400 W · Frío / calor", image: "rca.jpg", route: "#producto/cyber-3081", offer: { name: "Aire acondicionado RCA 5400 W", old: "$ 1.061.800,00", price: "$ 1.000.000,00", installments: "$ 333.333,33" } },
   { scene: "viking", category: "Bicicletas", title: "Viking X Jump", word: "VIKING", description: "Aluminio · 8 velocidades · Rodado 26", image: "viking.png", route: "#producto/cyber-3515", offer: { name: "Bicicleta Viking X Jump R26", old: "$ 833.500,00", price: "$ 816.500,00", installments: "$ 272.166,66" } },
@@ -18,7 +20,7 @@ const departments = [
   ["TV y audio", "#tv-audio", "audio.png"],
   ["Climatización", "#catalogo?cat=Climatizaci%C3%B3n"],
   ["Jardín", "#catalogo?cat=Jard%C3%ADn"],
-  ["Motos", "#motos-focus", "honda.jpg"],
+  ["Motos", "#motos-focus", "wave-110-transparent.webp"],
   ["Repuestos", "#catalogo?cat=Repuestos", "motul.webp"]
 ];
 
@@ -30,7 +32,7 @@ for (const index of [2, 4, 5, 3]) {
   link.className = "offer-card reveal";
   link.href = shop + piece.route;
   link.innerHTML = `
-    <div class="offer-photo"><span>CYBER DEMO</span><img src="assets/${piece.image}" alt="" loading="lazy" decoding="async"></div>
+    <div class="offer-photo"><span class="offer-label">CYBER DEMO</span>${productShot(piece)}</div>
     <div class="offer-meta"><h3>${name}</h3><del>${old}</del><strong>${price}</strong><small>3 cuotas demo desde ${installments}</small><span class="text-link">Ver ficha <span aria-hidden="true">↗</span></span></div>
   `;
   offers.append(link);
@@ -44,7 +46,8 @@ for (const [title, route, image] of departments) {
   if (image) {
     const photo = document.createElement("div");
     photo.className = "department-media";
-    photo.innerHTML = `<img src="assets/${image}" alt="" loading="lazy" decoding="async">`;
+    const scene = title === "Motos" ? "wave" : title === "Repuestos" ? "motul" : image.split(".")[0];
+    photo.innerHTML = productShot({ scene, image });
     link.append(photo);
   }
   const text = document.createElement("span");
@@ -54,75 +57,7 @@ for (const [title, route, image] of departments) {
   departmentList.append(link);
 }
 
-const exhibit = document.querySelector(".exhibit");
-const exhibitImage = exhibit.querySelector(".exhibit-image");
-const exhibitWord = exhibit.querySelector(".exhibit-word");
-const iris = exhibit.querySelector(".exhibit-iris");
-const title = document.querySelector("#piece-title");
-const category = document.querySelector("#piece-category");
-const description = document.querySelector("#piece-sub");
-const pieceLink = document.querySelector("#piece-link");
-const count = document.querySelector("#stage-count");
-const selectionButtons = [...document.querySelectorAll("[data-piece]")];
-let selection = 0;
-let stageAnimations = [];
-const preparedImages = new Map();
-
-function prepareImage(piece) {
-  if (!preparedImages.has(piece.image)) {
-    const img = new Image();
-    img.src = "assets/" + piece.image;
-    preparedImages.set(piece.image, img);
-  }
-  return preparedImages.get(piece.image);
-}
-
-function showPiece(index) {
-  const next = (index + pieces.length) % pieces.length;
-  if (next === selection) return;
-  selection = next;
-  const piece = pieces[next];
-  stageAnimations.forEach(animation => animation.cancel());
-
-  exhibit.dataset.scene = piece.scene;
-  selectionButtons.forEach((button, i) => button.setAttribute("aria-pressed", i === next));
-  exhibitWord.textContent = piece.word;
-  const image = prepareImage(piece);
-  image.alt = piece.title;
-  image.className = piece.scene === "wave" ? "" : "photo-tile";
-  exhibitImage.classList.toggle("wave-mask", piece.scene === "wave");
-  exhibitImage.replaceChildren(image);
-  category.textContent = piece.category;
-  title.textContent = piece.title;
-  description.textContent = piece.description;
-  pieceLink.href = shop + piece.route;
-  count.textContent = String(next + 1).padStart(2, "0") + " / " + String(pieces.length).padStart(2, "0");
-
-  if (!reduceMotion.matches) {
-    const ease = { duration: 650, easing: "cubic-bezier(.17,.75,.24,1)" };
-    stageAnimations = [
-      exhibitImage.animate([
-        { opacity: 0, transform: "perspective(900px) translate3d(22px,16px,-92px) rotateY(-10deg)", clipPath: "inset(0 32% 0 32%)" },
-        { opacity: 1, transform: "perspective(900px) translate3d(0,0,0) rotateY(0)", clipPath: "inset(0 0 0 0)" }
-      ], ease),
-      iris.animate([{ transform: "rotate(11deg) scale(.7)", opacity: .15 }, { transform: "rotate(-13deg) scale(1)", opacity: 1 }], { ...ease, duration: 840 }),
-      exhibitWord.animate([{ opacity: 0, transform: "translate(-47%,10px)" }, { opacity: 1, transform: "translate(-50%,0)" }], ease)
-    ];
-  }
-  prepareImage(pieces[(next + 1) % pieces.length]);
-}
-
-selectionButtons.forEach(button => button.addEventListener("click", () => showPiece(Number(button.dataset.piece))));
-document.querySelectorAll("[data-step]").forEach(button => button.addEventListener("click", () => showPiece(selection + Number(button.dataset.step))));
-document.querySelector("[data-hero-product]").addEventListener("click", () => showPiece(0));
-const showroom = document.querySelector(".showroom");
-const warmRoom = new IntersectionObserver(entries => {
-  if (entries.some(entry => entry.isIntersecting)) {
-    pieces.forEach(prepareImage);
-    warmRoom.disconnect();
-  }
-}, { rootMargin: "120px" });
-warmRoom.observe(showroom);
+createGallery(pieces, shop, reduceMotion);
 
 const ads = [...document.querySelectorAll("[data-ad]")];
 const adCount = document.querySelector("#ad-count");
@@ -159,23 +94,56 @@ document.addEventListener("keydown", event => {
 if (!reduceMotion.matches) {
   try {
     if (!location.hash || location.hash === "#inicio") {
-      if (!sessionStorage.getItem("fussetti-intro")) {
+      if (!sessionStorage.getItem("fussetti-intro-v2")) {
         document.documentElement.classList.add("is-intro");
-        sessionStorage.setItem("fussetti-intro", "seen");
+        sessionStorage.setItem("fussetti-intro-v2", "seen");
       }
     }
   } catch {}
 
+  for (const heading of document.querySelectorAll(".section-head h2, .campaign-head h2, .support h2")) {
+    const lines = heading.innerHTML.split(/<br\s*\/?\s*>/i);
+    heading.replaceChildren(...lines.flatMap((line, index) => {
+      const crop = document.createElement("span");
+      crop.className = "title-slice";
+      const text = document.createElement("span");
+      text.innerHTML = line;
+      crop.append(text);
+      return index === 0 ? [crop] : [document.createTextNode(" "), crop];
+    }));
+  }
+
+  const ease = "cubic-bezier(.18,.72,.23,1)";
   const reveals = new IntersectionObserver(entries => {
-    entries.forEach(({ target, isIntersecting }) => {
-      if (!isIntersecting) return;
+    for (const { target, isIntersecting } of entries) {
+      if (!isIntersecting) continue;
       reveals.unobserve(target);
-      if (!reduceMotion.matches) {
-        target.animate([{ opacity: .25, transform: "translateY(22px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 650, easing: "cubic-bezier(.18,.72,.23,1)" });
+      if (reduceMotion.matches) continue;
+      const heading = target.querySelectorAll(".title-slice > span");
+      const copy = target.querySelectorAll(
+        ".eyebrow, :scope > p, .campaign-head > div > p, .campaign-head .action, .support-copy, .support-links a, " +
+        ".offer-meta > *, .department-label, .ads-head h3, .ad-note, .gallery-identity > h3, .gallery-identity > p:last-child, .collection-foot a"
+      );
+      if (heading.length) {
+        heading.forEach((line, index) => {
+          const from = target.classList.contains("campaign-head") ? "translate(-4%,106%)" : "translateY(106%)";
+          line.animate([{ transform: from }, { transform: "translate(0,0)" }], {
+            duration: 770, delay: 74 + index * 95, easing: ease, fill: "backwards"
+          });
+        });
+      } else {
+        target.animate([{ opacity: .38, transform: "translateY(17px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 650, easing: ease });
       }
-    });
-  }, { threshold: .14 });
-  document.querySelectorAll(".reveal").forEach(element => reveals.observe(element));
+      copy.forEach((element, index) => {
+        const side = element.matches(".department-label, .support-links a");
+        const transform = side ? "translateX(-12px)" : "translateY(11px)";
+        element.animate([{ opacity: .12, transform }, { opacity: 1, transform: "none" }], {
+          duration: 520, delay: Math.min(index * 47, 235) + (heading.length && index > 0 ? 105 : 0), easing: ease, fill: "backwards"
+        });
+      });
+    }
+  }, { threshold: .12 });
+  document.querySelectorAll(".reveal, .gallery-caption, .collection-foot, .footer-top, .footer-bottom").forEach(element => reveals.observe(element));
 }
 const hero = document.querySelector(".hero");
 const heroObject = document.querySelector(".hero-object");

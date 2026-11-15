@@ -173,3 +173,25 @@ body { background: var(--scene-paper); }
   #app .discovery-header .retail-nav-spacer { display:none; }
   #app .discovery-header .main-nav a, #app .discovery-header .main-nav button { white-space:nowrap; }
 }
+/* Give product photography a stable stage inside the purchase flows. */
+#app .product-card .product-media {
+  background: radial-gradient(ellipse at 50% 35%, #fff 5%, #eee8e0 95%);
+  isolation: isolate;
+}
+#app .product-card .product-media > a { box-sizing:border-box; }
+#app .product-card .product-media img {
+  display:block;
+  box-sizing:border-box;
+  object-fit:contain;
+  object-position:center;
+  mix-blend-mode:multiply;
+}
+#app .product-card .product-media img[data-clean-photo="fussetti"] { padding:22px 18px 54px; }
+#app .product-page .detail-image img,
+#shopping-dialog :is(.quick-product-image,.gallery-lightbox) img { object-fit:contain; object-position:center; }
+@media (max-width:800px) {
+  #app .product-card .product-media img[data-clean-photo="fussetti"] { padding:12px 8px 42px; }
+}
+@media (max-width:600px) {
+  #app .product-grid:not(.results-grid) .product-card .product-media img[data-clean-photo="fussetti"] { padding:6px 4px 30px; }
+}

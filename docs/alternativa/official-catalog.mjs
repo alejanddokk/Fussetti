@@ -9,6 +9,7 @@ import {catalogueFacts} from './knowledge.mjs';
 import {signal} from './horizonx-ui.mjs';
 import {officialId} from './official-commerce.mjs';
 import {e,icon} from '../nueva/ui.mjs';
+import {productPhoto} from './product-media.mjs';
 function ready(){return !!data}
 const loading=()=>`<section class="container page"><h1>Catálogo Fussetti</h1><p role="status">${error||'Cargando los productos y sus fichas…'}</p></section>`;
 const cats={'Hogar':'Hogar, Muebles y Jardín','Tecnología':'Tecnología','Electrodomésticos':'Electrodomésticos','TV y audio':'TV y Audio'};
@@ -31,7 +32,10 @@ export function officialDetailView(s,id){
  if(!ready())return loading();
  const row=data.productos.find(p=>p.id_oficial===id),p=product(s,officialId(id));
  if(!row||!p)return '<section class="container page"><h1>Producto no encontrado</h1><a class="button" href="#catalogo">Volver al catálogo</a></section>';
- const images=row.imagenes,index=Math.min(gallerySelection.get(id)??Math.max(0,images.findIndex(image=>image.portada)),images.length-1),selected=images[index],facts=catalogueFacts(p).filter(a=>a.label!=='Modelo'&&a.label!=='Marca').slice(0,3);
+ const images=row.imagenes;
+ const preferred=images.findIndex(image=>image.url===productPhoto(p));
+ const initial=preferred>=0?preferred:Math.max(0,images.findIndex(image=>image.portada));
+ const index=Math.min(gallerySelection.get(id)??initial,images.length-1),selected=images[index],facts=catalogueFacts(p).filter(a=>a.label!=='Modelo'&&a.label!=='Marca').slice(0,3);
  const related=s.products.filter(x=>x.source==='fussetti-official'&&x.type===p.type&&x.id!==p.id&&x.stock>0).slice(0,2);
  return `<section class="container page product-page official-detail">
  <nav class="breadcrumb" aria-label="Ruta del producto"><a href="#catalogo">Explorar</a><span>/</span><a href="#catalogo?tipo=${p.type}">${e(types[p.type].name)}</a></nav>
