@@ -1,0 +1,20 @@
+/* Full-width continuous logo ribbon, matching the user's GHL reference. */
+.moto-lenders{width:100%;background:#fff;padding:25px 0;overflow:hidden}
+.moto-lenders-heading{text-align:center;padding-top:8px;padding-bottom:22px}
+.moto-journey .moto-lenders-heading h2{font-size:clamp(23px,2.4vw,32px);line-height:1.2;letter-spacing:-1px;margin:0 0 10px}
+.moto-lenders-heading p{font-size:14px;color:#626a72;line-height:1.6;margin:0}
+.moto-lenders-heading small{display:block;font-size:11px;color:#747c83;line-height:1.6;margin-top:6px}
+.moto-lenders-track{width:100%;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.lender-logo-loop{display:flex;width:max-content;animation:lenders-left var(--lenders-duration,50s) linear infinite;will-change:transform}
+.lender-logo-group{display:flex;flex:none;align-items:center;justify-content:space-around;min-width:100vw;gap:clamp(25px,4vw,70px);padding-inline:clamp(24px,3vw,48px)}
+.lender-logo{display:grid;place-items:center;flex:0 0 clamp(130px,11vw,175px);width:clamp(130px,11vw,175px);height:76px;margin:0;padding:5px;border:0;border-radius:0;background:transparent;cursor:pointer;text-decoration:none}
+.lender-logo>svg,.lender-logo>img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.lender-logo[data-credit-lender=cuota-ya]{flex-basis:115px;width:115px}
+.lender-logo:focus-visible{outline:2px solid #b00412;outline-offset:-2px}
+.moto-lenders[data-paused=true] .lender-logo-loop{animation-play-state:paused}
+.moto-lenders[data-keyboard=true] .lender-logo-loop{animation:none;transform:none}
+.moto-lenders[data-keyboard=true] .lender-logo-group[aria-hidden=true]{display:none}
+.moto-lenders[data-keyboard=true] .moto-lenders-track{overflow-x:auto;scrollbar-width:thin}
+@keyframes lenders-left{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@media(max-width:800px){.moto-lenders{padding:20px 0}.lender-logo{height:65px;flex-basis:135px;width:135px}.lender-logo[data-credit-lender=cuota-ya]{flex-basis:95px;width:95px}.lender-logo-group{gap:36px;padding-inline:24px}.moto-lenders-track{mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}}
+@media(prefers-reduced-motion:reduce){.lender-logo-loop{animation:none;transform:none;will-change:auto}.lender-logo-group[aria-hidden=true]{display:none}.moto-lenders-track{overflow-x:auto;scrollbar-width:thin}}

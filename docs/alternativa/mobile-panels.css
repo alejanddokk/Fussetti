@@ -1,0 +1,13 @@
+@media(max-width:800px){
+ body.mobile-panel-open{overflow:hidden}
+ #discovery-menu,#services-menu{height:var(--mobile-panel-height,100dvh);max-height:var(--mobile-panel-height,100dvh);overflow-y:auto;overflow-x:hidden;scroll-padding-top:100px;padding-bottom:env(safe-area-inset-bottom)}
+ .navigation-dialog .navigation-dialog-head{position:sticky;top:0;background:#fff;z-index:5;flex-shrink:0;padding-top:max(17px,env(safe-area-inset-top))}
+ .navigation-dialog .navigation-close{flex-shrink:0;min-width:44px;min-height:44px}
+ .navigation-dialog .navigation-dialog-head>div{min-width:0}
+ .navigation-dialog .navigation-dialog-head h2{overflow-wrap:anywhere}
+ .smart-search-dialog[data-mobile=true]{height:var(--mobile-panel-height,100dvh)!important;max-height:var(--mobile-panel-height,100dvh)!important;width:100%!important;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom)}
+ .smart-search-dialog[data-mobile=true][open]{animation:navigation-drop 320ms cubic-bezier(.2,.85,.25,1);transform-origin:top}
+ .smart-search-mobile-form>input{font-size:16px}
+ .services-bottom,.navigation-dialog-foot{padding-bottom:max(20px,env(safe-area-inset-bottom))}
+}
+@media(prefers-reduced-motion:reduce){.smart-search-dialog[data-mobile=true][open]{animation:none!important}}

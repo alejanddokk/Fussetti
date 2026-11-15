@@ -1,0 +1,20 @@
+/* The showroom is the first screen; parts remain in normal document flow. */
+.moto-carousel{min-height:100svh;display:grid;grid-template-rows:minmax(575px,1fr) auto auto}
+.moto-carousel-window{display:grid;min-height:0}
+.moto-carousel-slides{display:grid}
+.moto-slide[data-active=true]{grid-area:1/1;height:100%}
+.moto-slide-inner{height:100%}
+.mf-motos{min-height:100svh;display:flex;flex-direction:column}
+.mf-moto-stage{flex:1;min-height:395px}
+.mf-moto-bike{top:calc((100% - 395px)/2 + 8px)}
+@media(max-width:800px){
+ .moto-carousel,.mf-motos{padding-bottom:64px}
+ .moto-carousel{grid-template-rows:minmax(602px,1fr) auto auto}
+ .mf-moto-stage{min-height:220px}
+ .mf-moto-bike{top:calc((100% - 220px)/2 + 16px)}
+}
+@media(max-width:380px){
+ .moto-carousel{grid-template-rows:minmax(583px,1fr) auto auto}
+ .mf-moto-stage{min-height:206px}
+ .mf-moto-bike{top:calc((100% - 206px)/2 + 16px)}
+}

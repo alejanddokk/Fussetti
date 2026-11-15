@@ -1,0 +1,103 @@
+/* Motion Focus / HorizonX: a shared floor, translating roles and centre scale.
+   Scoped to the parallel view; the individual showroom keeps its own styling. */
+.moto-view-link{margin-left:auto;display:inline-flex!important;align-items:center;gap:9px;color:#6a6f72;font-size:10px;letter-spacing:.2px;min-height:34px;pointer-events:auto}
+.moto-view-link:hover{color:#b00412}
+.mf-motos{background:#f3f3f3;overflow:hidden;border-bottom:1px solid #e1e2e3}
+.mf-moto-branding{position:relative;display:flex;align-items:center;gap:23px;padding-block:25px 17px}
+.mf-moto-branding>a:first-child{display:block;flex:none}
+.mf-moto-branding>a:first-child>img{display:block;width:145px;height:52px;object-fit:contain}
+.mf-honda{display:flex;align-items:center;justify-content:center;background:#d50718;padding:10px 15px;border-radius:3px;box-shadow:0 4px 14px #a6030310}
+.mf-honda>img{width:98px;height:19px;object-fit:contain}
+.mf-view-link{margin-left:auto;display:inline-flex;align-items:center;gap:9px;font-size:10px;color:#6a6f72;min-height:34px;letter-spacing:.2px}
+.mf-view-link:hover{color:#b00412}
+.mf-moto-intro{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-block:6px 2px}
+.mf-moto-intro>h1{font-size:12px;font-weight:600;letter-spacing:.1px;line-height:1.6;margin:0;color:#60676c}
+.mf-moto-intro>span{font-size:10px;color:#959a9e}
+.mf-moto-stage{position:relative;height:395px;overflow:hidden;touch-action:pan-y;isolation:isolate;cursor:grab;outline-offset:-4px}
+.mf-motos[data-dragging=true] .mf-moto-stage{cursor:grabbing;user-select:none}
+.mf-moto-bike{position:absolute;top:8px;left:50%;width:700px;max-width:none;height:340px;border:0;border-radius:0;padding:0;margin:0;overflow:visible;background:transparent;color:#535a60;transform-origin:50% 100%;will-change:transform,opacity;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:pan-y}
+.mf-motos[data-dragging=true] .mf-moto-bike{cursor:grabbing}
+.mf-moto-bike:focus-visible{outline:none}
+.mf-moto-bike:focus-visible:after{content:'';position:absolute;left:15%;right:15%;bottom:-25px;height:2px;background:#b00412}
+.mf-bike-image{display:block;width:100%;height:100%;max-width:none;object-fit:contain;pointer-events:none;overflow:hidden}
+.mf-bike-shadow{position:absolute;left:20%;right:20%;bottom:7px;height:22px;background:#2532371c;filter:blur(10px);border-radius:50%;transform:scaleY(.5);z-index:-1;pointer-events:none}
+.mf-bike-caption{position:absolute;bottom:-26px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:600;letter-spacing:.6px;white-space:nowrap;pointer-events:none}
+.mf-moto-bike[data-center=true] .mf-bike-caption{visibility:hidden}
+.mf-moto-bike:hover .mf-bike-caption,.mf-moto-bike:focus-visible .mf-bike-caption{color:#b00412}
+.mf-moto-arrows{position:absolute;inset:0 24px;display:flex;align-items:center;justify-content:space-between;z-index:500;pointer-events:none}
+.mf-moto-arrows>button{width:43px;height:43px;display:grid;place-items:center;border:1px solid #c9cdd1;border-radius:50%;background:#f3f3f3e8;color:#303b42;pointer-events:auto;transition:background 180ms,color 180ms,border-color 180ms}
+.mf-moto-arrows>button:hover{background:#b00412;border-color:#b00412;color:#fff}
+.mf-moto-arrows>[data-focus-prev]>svg{transform:rotate(180deg)}
+.mf-moto-summary{display:grid;grid-template-columns:1fr .95fr 1.1fr;grid-template-rows:auto auto auto;column-gap:35px;row-gap:4px;align-items:center;padding-block:23px 26px;min-height:165px}
+.mf-moto-summary[hidden]{display:none}
+.mf-moto-summary>.moto-slide-kicker{grid-column:1;grid-row:1;font-size:8px;letter-spacing:1.4px}
+.mf-moto-summary>h2{grid-column:1;grid-row:2;font:800 45px/1.1 var(--heading);letter-spacing:-2px;margin:2px 0 4px;color:#22272c}
+.mf-moto-summary>p{grid-column:1;grid-row:3;font-size:10px;line-height:1.7;color:#7a7e82;margin:0;max-width:300px}
+.mf-moto-summary>.moto-price{grid-column:2;grid-row:1/4;padding-left:17px;gap:5px}
+.mf-moto-summary>.moto-price>strong{font-size:28px}
+.mf-moto-summary>.moto-slide-actions{grid-column:3;grid-row:1/3;margin:0;gap:9px;display:flex;flex-wrap:wrap}
+.mf-moto-summary .moto-slide-actions>.button{min-height:47px;padding:12px 17px;font-size:10px}
+.mf-moto-summary>.moto-finance-link{grid-column:3;grid-row:3;font-size:9px;margin:0;min-height:30px;align-self:start}
+.mf-moto-selector{display:flex;gap:10px;overflow-x:auto;padding-block:0 23px;scrollbar-width:thin;overscroll-behavior-x:contain}
+.mf-moto-selector>button{position:relative;flex:1;min-width:145px;display:flex;align-items:center;gap:9px;border:1px solid #e0e2e4;border-radius:7px;min-height:70px;padding:12px 11px 9px;background:#ffffff9c;text-align:left;color:#677078;transition:border-color 200ms,background 200ms,box-shadow 200ms}
+.mf-moto-selector>button>small{position:absolute;top:6px;right:8px;font-size:8px;line-height:1;color:#a6aab0}
+.mf-moto-selector>button>img{width:63px;height:39px;object-fit:contain}
+.mf-moto-selector>button>span{font-size:10px;font-weight:700;line-height:1.5}
+.mf-moto-selector>button[aria-current=true]{background:#fff;border-color:#b00412;color:#b00412;box-shadow:inset 0 -3px #b00412}
+.mf-moto-selector>button:hover{background:#fff;border-color:#b0041277}
+@media(max-width:1100px) and (min-width:801px){
+ .mf-moto-summary{grid-template-columns:1fr 1fr 1.1fr;column-gap:20px}
+ .mf-moto-summary>h2{font-size:38px}
+ .mf-moto-summary>.moto-price>strong{font-size:25px}
+ .mf-moto-summary>.moto-slide-actions{display:grid;grid-template-columns:1fr;width:100%}
+ .mf-moto-summary .moto-slide-actions>.button{min-height:40px;padding:9px 12px}
+ .mf-moto-summary>.moto-finance-link{font-size:8px}
+ .mf-moto-selector>button{min-width:145px;flex:0 0 auto}
+}
+@media(max-width:800px){
+ .moto-view-link{position:absolute;right:0;bottom:-20px;min-height:25px;font-size:8px;gap:6px}
+ .mf-moto-branding{padding-block:18px 17px;gap:17px}
+ .mf-moto-branding>a:first-child>img{width:124px;height:46px}
+ .mf-honda{padding:9px 12px}
+ .mf-honda>img{width:79px;height:16px}
+ .mf-view-link{position:absolute;right:0;bottom:-8px;min-height:26px;font-size:8px;gap:6px}
+ .mf-moto-intro{padding-block:14px 1px}
+ .mf-moto-intro>h1{font-size:10px;font-weight:500;line-height:1.6}
+ .mf-moto-intro>span{display:none}
+ .mf-moto-stage{height:220px}
+ .mf-moto-bike{top:16px;width:460px;height:154px}
+ .mf-bike-shadow{bottom:2px;height:14px;left:24%;right:24%;filter:blur(8px)}
+ .mf-bike-caption{bottom:-29px;font-size:12px;gap:7px}
+ .mf-moto-arrows{inset:0 8px;align-items:end;padding-bottom:6px}
+ .mf-moto-arrows>button{width:39px;height:39px}
+ .mf-moto-summary{display:flex;flex-wrap:wrap;column-gap:14px;row-gap:0;padding-block:20px 22px;min-height:0;align-items:start}
+ .mf-moto-summary>.moto-slide-kicker{width:100%;font-size:7px;letter-spacing:1.4px;margin-bottom:9px}
+ .mf-moto-summary>h2{width:100%;font-size:39px;line-height:1.1;margin:0 0 10px;letter-spacing:-1.8px}
+ .mf-moto-summary>p{width:100%;max-width:none;font-size:10px;margin:0 0 19px;line-height:1.7}
+ .mf-moto-summary>.moto-price{width:100%;max-width:none;margin:0 0 19px;padding:2px 0 2px 12px;gap:5px}
+ .mf-moto-summary>.moto-price>strong{font-size:27px}
+ .mf-moto-summary>.moto-price>small{font-size:7px}
+ .mf-moto-summary>.moto-price>span{font-size:9px}
+ .mf-moto-summary>.moto-slide-actions{width:100%;display:grid;grid-template-columns:1.1fr 1fr;gap:8px;margin:0}
+ .mf-moto-summary .moto-slide-actions>.button{min-height:44px;padding:11px 8px;font-size:9px}
+ .mf-moto-summary .moto-slide-actions>.button>svg{width:13px}
+ .mf-moto-summary>.moto-finance-link{margin-top:7px;font-size:9px;min-height:32px}
+ .mf-moto-selector{gap:8px;padding-bottom:18px}
+ .mf-moto-selector>button{min-width:141px;flex:0 0 auto;min-height:66px;gap:8px;padding:10px 9px 8px}
+ .mf-moto-selector>button>img{width:58px;height:36px}
+ .mf-moto-selector>button>span{font-size:9px;max-width:70px}
+}
+@media(max-width:380px){
+ .mf-moto-branding{gap:15px;padding-bottom:14px}
+ .mf-moto-branding>a:first-child>img{width:111px;height:40px}
+ .mf-honda{padding:8px 10px}.mf-honda>img{width:68px;height:14px}
+ .mf-moto-stage{height:206px}
+ .mf-moto-bike{height:143px;width:430px}
+ .mf-moto-summary>h2{font-size:36px}
+ .mf-moto-summary>.moto-price>strong{font-size:25px}
+ .mf-moto-summary .moto-slide-actions>.button{font-size:8px}
+}
+@media(prefers-reduced-motion:reduce){
+ .mf-moto-bike{will-change:auto}
+ .mf-moto-arrows>button,.mf-moto-selector>button{transition:none}
+}

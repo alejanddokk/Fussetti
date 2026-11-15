@@ -1,0 +1,13 @@
+/* Official data uses the shared Fussetti/HorizonX product cards, purchase box and actions. */
+.official-note{font-size:12px;color:var(--muted);line-height:1.7;margin:20px 0}
+.official-pager{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:30px 0}.official-pager>span{font-size:12px}
+.official-gallery{display:flex;gap:10px;overflow-x:auto;padding:3px 3px 12px;margin-bottom:16px;scroll-snap-type:x proximity}
+.official-gallery button{flex:0 0 74px;width:74px;height:74px;padding:5px;border:1px solid var(--shop-border);border-radius:7px;background:white;cursor:pointer;scroll-snap-align:start}
+.official-gallery button[aria-pressed=true]{border-color:var(--red);box-shadow:0 0 0 1px var(--red)}
+.official-gallery button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}.official-gallery img{width:100%;height:100%;object-fit:contain}
+.official-description{border-top:1px solid var(--line);padding-top:35px;margin-top:45px;max-width:100%}.official-description .page-title{margin-bottom:20px}.official-description h2{font-size:30px}.official-description>div:last-child{white-space:pre-wrap;line-height:1.9;font-size:14px;overflow-wrap:anywhere;max-width:900px}
+.official-specs{width:100%;border-collapse:collapse;margin:20px 0;table-layout:fixed}.official-specs caption{text-align:left;font-size:12px;color:var(--muted);margin-bottom:12px}.official-specs th,.official-specs td{text-align:left;vertical-align:top;padding:16px;border-bottom:1px solid var(--line);font-size:13px;overflow-wrap:anywhere}.official-specs th{width:40%;background:var(--shop-soft);font-weight:500}
+.official-provenance{margin-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}.official-provenance summary{padding:16px 0;cursor:pointer;min-height:44px}.official-provenance dl{margin-bottom:16px}.official-provenance dl>div{display:grid;grid-template-columns:1fr 1.5fr;gap:12px;padding:8px 0}.official-provenance dd{margin:0;color:var(--ink)}.official-provenance>a{min-height:44px;display:inline-flex;align-items:center}
+.official-related .product-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:760px}.official-detail .purchase-price .small-print{line-height:1.7}
+@media(max-width:800px){.official-detail .product-gallery .detail-image{height:300px}.official-gallery button{flex-basis:64px;width:64px;height:64px}.official-description h2{font-size:26px}.official-description>div:last-child{font-size:13px}.official-specs th,.official-specs td{padding:12px;font-size:12px}.official-provenance dl>div{grid-template-columns:1fr}.official-pager .button{font-size:11px;padding:12px}.official-note{font-size:11px}}
+@media(max-width:380px){.official-related .product-grid{grid-template-columns:1fr}}

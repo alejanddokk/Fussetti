@@ -1,0 +1,7 @@
+{
+  "name": "fussetti-en-escena",
+  "private": true,
+  "scripts": {
+    "start": "node preview.mjs"
+  }
+}

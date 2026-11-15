@@ -1,0 +1,5 @@
+.best-intro{padding-top:46px;padding-bottom:0}.best-intro .eyebrow{font-size:9px;letter-spacing:1.5px;margin:0 0 10px}.best-intro h2{font-size:30px;font-weight:600;line-height:1.25;letter-spacing:-1px;margin:0 0 10px}.best-intro>p:last-child{font-size:10px;line-height:1.7;color:#737b7d;max-width:690px;margin:0}.best-intro+.best-showroom{margin-top:24px}.best-showroom .gf-source{max-width:calc(100% - 32px)}
+@media(max-width:700px){.best-intro{padding-top:30px}.best-intro h2{font-size:25px}.best-intro>p:last-child{font-size:9px}.best-intro+.best-showroom{margin-top:18px}}
+
+.best-pool-reminder{display:block;margin-top:6px;color:#6d7579;font-size:9px;line-height:1.5}
+@media(max-width:700px){.best-showroom .gf-product{width:68vw}}

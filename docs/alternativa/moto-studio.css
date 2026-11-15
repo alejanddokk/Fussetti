@@ -1,0 +1,112 @@
+/* Fussetti / Honda. Layered entrance uses HorizonX Fold spring + Glass Exit
+   timing in moto-carousel.mjs. Motorcycle photo calibration stays in motos.css. */
+.moto-carousel{background:#f3f3f3;border-bottom-color:#e0e0e0}
+.moto-carousel-window,.moto-slide-inner{min-height:575px}
+.moto-carousel-window{cursor:grab}
+.moto-carousel-slides{position:relative}
+.moto-carousel[data-dragging=true] .moto-carousel-window{cursor:grabbing;user-select:none}
+.moto-slide{will-change:auto;overflow:hidden}
+.moto-slide[hidden]{display:none}
+.moto-slide[data-active=true]{position:relative;inset:auto;z-index:2}
+.moto-slide[data-active=false]{z-index:1;pointer-events:none}
+.moto-slide-inner{height:auto;grid-template-columns:.82fr 1.4fr;gap:30px}
+.moto-carousel-branding{top:25px;gap:23px}
+.moto-carousel-branding>a>img{width:145px;height:52px}
+.moto-carousel-honda{box-shadow:0 4px 14px #a6030310}
+.moto-slide-copy{padding-top:104px;padding-bottom:31px}
+.moto-slide-kicker{display:inline-flex;align-items:center;gap:10px;font-size:10px;letter-spacing:2px;font-weight:700}
+.moto-slide-kicker:before{content:'';width:22px;height:2px;background:#c50717}
+.moto-slide h2{font-size:clamp(52px,5.4vw,82px);letter-spacing:-4px;line-height:1.06;margin:18px 0 16px;color:#202429}
+.moto-slide-copy>p{font-size:13px;line-height:1.75;max-width:315px;margin-bottom:22px;color:#676a6e}
+.moto-price{width:max-content;max-width:100%;border-left:2px solid #c50717;padding:4px 0 4px 16px;gap:5px}
+.moto-price>small{font-size:8px;letter-spacing:1.2px;color:#75777a}
+.moto-price>strong{font-size:29px;letter-spacing:-1.1px;color:#b00412}
+.moto-price>span{display:flex;align-items:center;gap:7px;color:#676a6e;font-size:10px;line-height:1.6}
+.moto-price>span:before{content:'';width:5px;height:5px;border-radius:50%;background:#999;flex:none}
+.moto-price[data-available=true]>span:before{background:#347052}
+.moto-slide-actions{margin-top:24px;gap:10px}
+.moto-slide-actions .button{min-height:48px;border-radius:7px;font-size:11px;font-weight:700;padding:13px 19px;box-shadow:0 5px 12px #a6030312;transition:background 180ms,box-shadow 180ms,transform 180ms}
+.moto-slide-actions .button:not(.outline){background:#b00412;border-color:#b00412}
+.moto-slide-actions .button:not(.outline):hover{background:#94000c;box-shadow:0 7px 17px #a6030323;transform:translateY(-1px)}
+.moto-slide-actions .button.outline{background:#fff8;border-color:#c5c6c8;box-shadow:none;color:#343a3e}
+.moto-slide-actions .button.outline:hover{background:#fff;border-color:#5a5d60}
+.moto-slide-actions a>svg{transition:transform 220ms}
+.moto-slide-actions a:hover>svg{transform:translateX(3px)}
+.moto-finance-link{margin-top:8px;font-size:10px;color:#696c70;gap:8px}
+.moto-slide-visual{padding-top:25px;perspective:1200px;transform-origin:50% 60%}
+.moto-slide-visual:before{left:11%;right:8%;bottom:20%;height:5%;background:#26303b25;filter:blur(17px)}
+.moto-slide-visual:after{content:'';position:absolute;inset:30% 5% 14%;border:1px solid #dadcdf;border-radius:50%;transform:rotate(-13deg);z-index:-1;pointer-events:none}
+.moto-model-watermark{top:19%;left:-4%;right:0;color:transparent;-webkit-text-stroke:1px #d5d7da;font-size:clamp(90px,10vw,154px);letter-spacing:-8px;opacity:1}
+.moto-photo-note{bottom:25px;color:#85868a;font-size:8px;letter-spacing:.15px}
+.moto-carousel-controls{min-height:74px;gap:35px;border-color:#d9dadd}
+.moto-carousel-count{gap:11px;flex:none;font-size:10px}
+.moto-carousel-count>b{font-size:28px;font-weight:700;letter-spacing:-1px;color:#25292d}
+.moto-carousel-count>[data-moto-name]{font-size:10px;letter-spacing:.8px;font-weight:600;color:#666c72;margin-left:14px}
+.moto-carousel-track{height:2px;background:#dddfe1;flex:1;max-width:250px;margin-left:auto;margin-right:13px;overflow:hidden}
+.moto-carousel-track>i{display:block;height:100%;background:#b00412;transition:width 650ms cubic-bezier(.360001,0,.120001,1)}
+.moto-carousel-controls>div{gap:10px}
+.moto-carousel-controls button{width:44px;height:44px;background:transparent;border-color:#c8cbce;transition:background 180ms,border-color 180ms,color 180ms}
+.moto-carousel-controls button:hover{background:#b00412;color:white;border-color:#b00412}
+.moto-carousel-controls button:focus-visible,.moto-model-selector>button:focus-visible{outline:2px solid #b00412;outline-offset:4px}
+.moto-model-selector{gap:10px;padding-top:4px;padding-bottom:22px}
+.moto-model-selector>button{position:relative;min-width:145px;min-height:76px;padding:15px 12px 12px;gap:9px;background:#ffffff9c;border-color:#e0e1e3;border-radius:8px;overflow:hidden;transition:background 200ms,border-color 200ms,box-shadow 200ms}
+.moto-model-selector>button>small{position:absolute;top:6px;right:9px;font-size:8px;line-height:1;color:#a6a8ab;letter-spacing:.4px}
+.moto-model-selector img{width:66px;height:43px;mix-blend-mode:darken}
+.moto-model-selector>button>span{font-size:10px;font-weight:700;letter-spacing:.1px;color:#62686d}
+.moto-model-selector>button[aria-current=true]{background:#fff;border-color:#b00412;box-shadow:inset 0 -3px #b00412,0 4px 12px #22222205}
+.moto-model-selector>button[aria-current=true]>span,.moto-model-selector>button[aria-current=true]>small{color:#b00412}
+.moto-model-selector>button:hover{background:#fff;border-color:#b0041266}
+@media(max-width:1100px) and (min-width:801px){
+ .moto-slide-inner{grid-template-columns:.9fr 1.1fr;gap:16px}
+ .moto-slide h2{font-size:65px}
+ .moto-model-selector>button{min-width:148px;flex:0 0 auto}
+ .moto-slide-actions .button{font-size:10px;padding-inline:14px}
+}
+@media(max-width:800px){
+ .moto-carousel-window,.moto-slide-inner{min-height:602px}
+ .moto-slide-inner{display:flex;gap:0;padding-top:87px;padding-bottom:18px}
+ .moto-carousel-branding{top:18px;gap:17px}
+ .moto-carousel-branding>a>img{width:124px;height:46px}
+ .moto-slide-copy{display:contents}
+ .moto-slide-kicker{font-size:8px;letter-spacing:1.5px;gap:8px}
+ .moto-slide-kicker:before{width:17px}
+ .moto-slide h2{font-size:53px;letter-spacing:-2.8px;margin:13px 0 9px}
+ .moto-slide-copy>p{font-size:11px;line-height:1.7;max-width:320px;margin-bottom:13px}
+ .moto-slide-visual{height:172px;min-height:172px;margin:0;padding:15px 0 22px;perspective:900px}
+ .moto-slide-visual:after{inset:30% 5% 16%;transform:rotate(-12deg)}
+ .moto-slide-visual:before{bottom:25%;filter:blur(12px)}
+ .moto-model-watermark{top:0;left:0;font-size:66px;letter-spacing:-3px;-webkit-text-stroke:1px #d7d9dc}
+ .moto-photo-note{bottom:4px;font-size:6px;letter-spacing:0}
+ .moto-price{margin-top:9px;margin-bottom:1px;padding:2px 0 2px 12px;gap:5px}
+ .moto-price>small{font-size:7px;letter-spacing:.9px}
+ .moto-price>strong{font-size:27px}
+ .moto-price>span{font-size:9px;line-height:1.6}
+ .moto-slide-actions{margin-top:19px;gap:9px}
+ .moto-slide-actions .button{font-size:10px;min-height:46px;padding:12px 10px}
+ .moto-finance-link{font-size:9px;min-height:34px;margin-top:7px}
+ .moto-carousel-controls{min-height:65px;gap:20px}
+ .moto-carousel-count{gap:8px;font-size:10px}
+ .moto-carousel-count>b{font-size:23px}
+ .moto-carousel-track{max-width:100px;margin-right:0}
+ .moto-carousel-controls>div{gap:8px}
+ .moto-carousel-controls button{width:41px;height:41px}
+ .moto-model-selector{padding-top:2px;padding-bottom:18px;gap:9px}
+ .moto-model-selector>button{min-width:150px;min-height:72px;padding:12px 10px 9px;gap:9px}
+ .moto-model-selector img{width:62px;height:40px}
+ .moto-model-selector>button>span{font-size:9px;max-width:70px}
+}
+@media(max-width:380px){
+ .moto-carousel-window,.moto-slide-inner{min-height:583px}
+ .moto-slide-inner{padding-top:79px}
+ .moto-carousel-branding>a>img{width:111px;height:40px}
+ .moto-slide h2{font-size:47px;letter-spacing:-2.4px}
+ .moto-slide-visual{height:160px;min-height:160px}
+ .moto-model-watermark{font-size:58px}
+ .moto-price>strong{font-size:25px}
+ .moto-slide-actions .button{font-size:9px;padding-inline:7px}
+ .moto-carousel-track{max-width:75px}
+}
+@media(prefers-reduced-motion:reduce){
+ .moto-slide-actions .button,.moto-slide-actions a>svg,.moto-carousel-controls button,.moto-model-selector>button,.moto-carousel-track>i{transition:none}
+ .moto-slide-actions .button:hover{transform:none}
+}

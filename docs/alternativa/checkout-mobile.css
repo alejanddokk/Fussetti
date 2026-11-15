@@ -1,0 +1,54 @@
+/* Mobile purchase actions stay close to the total, without changing calculations. */
+.ck-mobile-bar, .ck-compact-heading { display: none; }
+@media (max-width: 800px) {
+  html:has(.ck-mobile-bar) { scroll-padding-bottom: calc(150px + env(safe-area-inset-bottom)); }
+  body:has(.ck-page) .mobile-nav { padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
+  .ck-page { padding-top: 15px; padding-bottom: calc(145px + env(safe-area-inset-bottom)); }
+  .ck-progress { margin-bottom: 18px; }
+  .ck-progress li > a, .ck-progress li > button, .ck-progress li > span { min-height: 52px; font-size: 10px; }
+  .ck-page-title { margin-bottom: 19px; }
+  .ck-page-title .eyebrow { margin-bottom: 8px; }
+  .ck-page-title h1 { font-size: clamp(25px, 7vw, 30px); margin-bottom: 8px; }
+  .ck-page-title > p:not(.eyebrow) { font-size: 13px; line-height: 1.6; }
+  .ck-basket-heading > b, .ck-basket-heading > .ck-inline-link { font-size: 11px; }
+  .ck-line { gap: 13px; padding: 18px 0; }
+  .ck-line-description h2 { font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
+  .ck-line-description > span, .ck-line-availability { font-size: 11px; line-height: 1.5; }
+  .ck-line-description > span, .ck-line-description > small { display: block; }
+  .ck-line-controls { gap: 7px 9px; }
+  .ck-quantity { width: 132px; }
+  .ck-quantity button { width: 44px; height: 44px; }
+  .ck-quantity input { width: 44px; height: 44px; font-size: 16px; }
+  .ck-line-controls .ck-remove { min-height: 44px; font-size: 12px; }
+  .ck-line-controls > strong { font-size: 16px; overflow-wrap: anywhere; white-space: normal; }
+  .ck-basket-note p, .ck-summary-meta small { font-size: 12px; line-height: 1.5; }
+  .ck-stage { padding: 20px 17px; }
+  .ck-stage > h2 { font-size: 24px; line-height: 1.22; margin-bottom: 10px; }
+  .ck-stage-intro { font-size: 13px; line-height: 1.6; margin-bottom: 18px; }
+  .ck-stage legend { font-size: 13px; }
+  .ck-radio-tabs label { min-height: 48px; font-size: 12px; line-height: 1.3; }
+  .ck-delivery-info p, .ck-option-content > small, .ck-option-content > em, .ck-branch-missing { font-size: 12px; line-height: 1.5; }
+  .ck-option-content > b, .ck-payment .ck-option-content > b { font-size: 13px; line-height: 1.4; }
+  .ck-more-branches > summary { min-height: 48px; font-size: 12px; }
+  .ck-stage-actions > .button, .ck-stage-actions .ck-submit { min-height: 48px; font-size: 12px; }
+  .ck-review-facts h3, .ck-review-products span { font-size: 12px; }
+  .ck-review-facts p, .ck-review-facts small { font-size: 12px; line-height: 1.5; }
+  .ck-checkout-heading .ck-full-heading, .ck-checkout-heading .ck-mobile-total { display: none; }
+  .ck-checkout-heading .ck-compact-heading { display: inline; }
+  #buy-summary-title { scroll-margin-top: 20px; }
+  .ck-mobile-bar { position: fixed; z-index: 29; left: 0; right: 0; bottom: calc(60px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: minmax(0, 1fr) minmax(130px, 42%); align-items: center; gap: 10px; min-height: 76px; padding: 9px 18px; background: #fff; border-top: 1px solid #e3e3e3; box-shadow: 0 -5px 18px #25323712; }
+  .ck-mobile-total-trigger { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1px 6px; min-width: 0; min-height: 52px; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; }
+  .ck-mobile-total-trigger > span { font-size: 10px; color: #636b6e; line-height: 1.2; }
+  .ck-mobile-bar strong { grid-column: 1 / -1; color: #a60303; font-size: clamp(15px, 4.6vw, 20px); line-height: 1.2; letter-spacing: -.5px; overflow-wrap: anywhere; }
+  .ck-mobile-total-trigger > small { grid-column: 2; grid-row: 1; color: #a60303; font-size: 10px; text-decoration: underline; text-underline-offset: 3px; }
+  .ck-mobile-bar > .button { display: flex; align-items: center; justify-content: center; gap: 7px; min-width: 0; min-height: 48px; padding: 10px 8px; border-radius: 6px; text-align: center; font-size: 12px; line-height: 1.25; }
+  .ck-mobile-bar :is(button,a):focus-visible { outline: 3px solid #253237; outline-offset: 2px; }
+  body:has(.ck-quantity input:focus) .ck-mobile-bar, .ck-compact-heading { display: none; }
+}
+@media (max-width: 380px) {
+  .ck-line { grid-template-columns: 68px minmax(0,1fr); }
+  .ck-line-controls { grid-template-columns: 1fr; }
+  .ck-line-controls > strong { text-align: left; }
+  .ck-radio-tabs label { font-size: 11px; }
+  .ck-mobile-bar { grid-template-columns: minmax(0,1fr) minmax(118px,42%); padding-inline: 12px; gap: 7px; }
+}

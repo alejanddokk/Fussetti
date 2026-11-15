@@ -1,0 +1,15 @@
+import {curatedSector,sectorHref} from './sector-model.mjs';
+import {officialId,initialOfficialStock} from './official-commerce.mjs';
+import {action} from './horizonx-ui.mjs';
+import {e,icon} from '../nueva/ui.mjs';
+
+// Grid Deck-inspired editorial grid, with the layered depth of HorizonX Fold Carousel.
+// Product information and availability always come from the current demo scenario.
+// Unchanged individual product photos from the same official catalogue snapshot.
+const individualPhotos=new Set(['1539','2008','3586','3722','3576','3532']);
+export function electroDestacados(s,rows){
+ const products=curatedSector(s,rows,'electrodomesticos',['1539','2008','3586','3722','3576','3532'],6);
+ const categories=[['frio','Frío'],['lavado','Lavado'],['coccion','Cocción'],['pequenos','Pequeños'],['limpieza','Limpieza'],['confort','Confort']];
+ return `<section class="container ed-showcase" aria-labelledby="ed-title"><div class="ed-intro"><div><p class="eyebrow">SELECCIÓN FUSSETTI</p><h2 id="ed-title">Tu casa pide<br><em>algo nuevo.</em></h2><p>Desde cocinar hasta refrescar tus espacios: descubrí una selección de nuestro catálogo.</p></div><a class="ed-all" href="${e(sectorHref('electrodomesticos'))}">Ver todos los productos ${icon('arrow',18)}</a></div><nav class="ed-categories" aria-label="Explorar electrodomésticos por categoría">${categories.map(([id,label])=>`<a href="${e(sectorHref('electrodomesticos',id))}">${label} <span aria-hidden="true">↗</span></a>`).join('')}</nav><div class="ed-grid">${products.map((p,i)=>{const id=officialId(p.id_oficial),available=(s.products.find(x=>x.id===id)?.stock??initialOfficialStock(p))-(s.cart.find(x=>x.id===id)?.qty||0),img=p.imagenes.find(x=>x.portada)||p.imagenes[0];return `<article class="ed-card ${i===0?'ed-feature':''}"><div class="ed-card-image"><span class="ed-index">${String(i+1).padStart(2,'0')} / SELECCIÓN</span><a href="#producto-oficial/${e(p.id_oficial)}"><img src="${e(individualPhotos.has(p.id_oficial)?'https://fussetti-replica-20261102.germanvives15.chatgpt.site/alternativa/assets/electro-destacados/'+p.id_oficial+'.jpg':img?.url||'')}" alt="${e(p.nombre)}" loading="lazy" decoding="async"></a><button class="ed-quick" data-quick="${e(id)}" aria-label="Vista rápida de ${e(p.nombre)}">Vista rápida ${icon('arrow',15)}</button></div><div class="ed-card-body"><span class="ed-brand">${e(p.marca||'FUSSETTI')}</span><a href="#producto-oficial/${e(p.id_oficial)}"><h3>${e(p.nombre)}</h3></a><div class="ed-price"><small>PRECIO PUBLICADO</small><strong>${e(p.precio_texto)}</strong><span>${e(p.cuotas_texto||'Sin cuotas publicadas')}</span></div>${action(available>0?'Comprar ahora':'Máximo agregado',`data-add="${e(id)}" data-next="checkout" ${available>0?'':'disabled'}`,'ed-buy')}</div></article>`}).join('')||'<p>No hay productos disponibles en el escenario demo. Explorá el catálogo completo.</p>'}</div><p class="ed-note">Selección editorial · Precios oficiales relevados al 4/11/2026 · Compra y stock de demostración</p></section>`;
+}
+
