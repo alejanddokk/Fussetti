@@ -9,9 +9,14 @@
   <link rel="icon" href="assets/wordmark.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script>
+    if ((!location.hash || location.hash === "#inicio") && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      document.documentElement.classList.add("is-intro");
+    }
+  </script>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="gallery.css">
-  <script type="module" src="app.js"></script>
+  <link rel="stylesheet" href="gallery.css?v=deslizamiento1">
+  <script type="module" src="app.js?v=deslizamiento1"></script>
 </head>
 <body>
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -57,19 +62,19 @@
       <div class="shell">
         <div class="section-head collection-head reveal">
           <div><p class="eyebrow"><i></i> LA COLECCIÓN</p><h2 id="collection-title">Cada pieza,<br>su propio escenario.</h2></div>
-          <p>Deslizá la colección. Llevá cada pieza al centro y acercate a sus detalles.</p>
+          <p>Deslizá la colección y tocá una pieza para ver su ficha.</p>
         </div>
-        <div class="gallery" data-scene="wave" aria-label="Colección interactiva">
+        <div class="gallery" aria-label="Colección interactiva">
           <div class="gallery-stage">
-            <div class="gallery-hud"><span id="stage-count">01 / 06</span><button class="gallery-zoom" type="button" data-showroom-zoom>Ampliar foto <span aria-hidden="true">↗</span></button></div>
+            <div class="gallery-hud"><span id="stage-count">01 / 06</span><button class="rotation-toggle" type="button" data-gallery-rotation>Pausar</button></div>
             <div class="gallery-viewport" aria-label="Arrastrá o usá las flechas para recorrer la colección">
               <div class="gallery-lamp" aria-hidden="true"></div>
               <div class="gallery-floor" aria-hidden="true"></div>
-              <div class="gallery-word" aria-hidden="true">WAVE</div>
+
               <div class="gallery-track">
-                <div class="gallery-item gallery-fallback">
+                <a class="gallery-item" href="./alternativa/#producto/honda-wave-110-s">
                   <span class="product-shot" data-shot="wave"><img src="assets/wave-110-transparent.webp" alt="Honda Wave 110 S" width="1991" height="789"></span>
-                </div>
+                </a>
               </div>
             </div>
             <p class="gallery-hint" aria-hidden="true"><span>←</span> <span>Arrastrá para explorar</span> <span>→</span></p>
@@ -138,10 +143,6 @@
     </div>
   </footer>
 
-  <dialog class="home-dialog zoom-dialog" id="showroom-photo" aria-labelledby="showroom-photo-title">
-    <div class="home-dialog-head"><h2 id="showroom-photo-title">Foto del producto</h2><form method="dialog"><button class="icon-button" aria-label="Cerrar foto">×</button></form></div>
-    <div class="zoom-photo" data-zoom-photo></div>
-  </dialog>
   <dialog class="home-dialog" id="catalog-search" aria-labelledby="catalog-search-title">
     <div class="home-dialog-head"><h2 id="catalog-search-title">¿Qué estás buscando?</h2><form method="dialog"><button class="icon-button" aria-label="Cerrar búsqueda">×</button></form></div>
     <form action="./alternativa/" id="home-search-form" class="home-search-form" role="search">

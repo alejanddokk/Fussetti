@@ -3,7 +3,7 @@ import {homeShowroomUi} from './hogar-showroom.mjs';
 
 // The same HorizonX Motion Focus translation/easing used in Motos, with a
 // furniture-sized stage. Controls reset the clock without disabling autoplay.
-export const HOME_INTERVAL=6000,HOME_DURATION=800;
+export const HOME_INTERVAL=7800,HOME_DURATION=800;
 export function homePose(offset,width){
  const d=Math.abs(offset),p=Math.min(1,d),pitch=Math.max(125,Math.min(490,width*.61));
  return {x:offset*pitch,scale:1-(1-FOCUS_SIDE_SCALE)*p,opacity:Math.max(0,1-.66*p)*Math.max(0,Math.min(1,(1.85-d)/.65)),visible:d<1.85,z:Math.round(400-d*100)};
@@ -12,8 +12,11 @@ export function bindHomeShowroom(host,options={}){
  const prefix=options.prefix||'home',ui=options.ui||homeShowroomUi,pose=options.pose||homePose,attr=key=>'[data-'+prefix+'-'+key+']';
  const root=host.querySelector(attr('showroom'));if(!root)return ()=>{};
  const stage=root.querySelector(attr('stage')),items=[...root.querySelectorAll(attr('item'))],panels=[...root.querySelectorAll(attr('panel'))],selectors=[...root.querySelectorAll(attr('select'))],count=items.length;
+ const rotation=document.createElement('button');
+ rotation.type='button';rotation.className='moto-rotation showroom-playback';
+ rotation.textContent='Pausar';stage.append(rotation);
  const reduce=matchMedia('(prefers-reduced-motion:reduce)'),abort=new AbortController(),signal=abort.signal;
- let index=Math.max(0,items.findIndex(n=>n.dataset[prefix+'Id']===ui.id)),pos=index,target=index,from=pos,start=0,frame=0,timer=0,visible=true,disposed=false,drag=null,suppressUntil=0,infoAnimation=null,hoverDetails=false;
+ let index=Math.max(0,items.findIndex(n=>n.dataset[prefix+'Id']===ui.id)),pos=index,target=index,from=pos,start=0,frame=0,timer=0,visible=true,disposed=false,drag=null,suppressUntil=0,infoAnimation=null,hoverDetails=false,hoverStage=false,paused=false,duration=HOME_DURATION;
  const wrap=n=>((n%count)+count)%count,listen=(node,type,fn,options={})=>node.addEventListener(type,fn,{...options,signal});
  const stop=()=>{clearTimeout(timer);timer=0};
  function paint(){
@@ -39,20 +42,24 @@ export function bindHomeShowroom(host,options={}){
   if(user)root.querySelector(attr('status')).textContent=panel.querySelector(options.heading||'h2').textContent+', '+panel.querySelector(prefix==='home'?'.hs-price strong':'.gf-price strong').textContent;
  }
  function schedule(){
-  stop();if(disposed||reduce.matches||document.hidden||!visible||count<2||hoverDetails)return;
-  timer=setTimeout(()=>{if(!drag&&!document.querySelector('dialog[open]')&&!root.querySelector(':focus-visible'))go(target+1,false);else schedule()},HOME_INTERVAL);
+  stop();rotation.hidden=reduce.matches||count<2;rotation.textContent=paused?'Reanudar':'Pausar';
+  if(disposed||paused||reduce.matches||document.hidden||!visible||count<2||hoverDetails||hoverStage)return;
+  timer=setTimeout(()=>{if(!drag&&!document.querySelector('dialog[open]')&&(!root.querySelector(':focus-visible')||document.activeElement===rotation))go(target+1,false);else schedule()},HOME_INTERVAL);
  }
  function tick(now){
   frame=0;if(disposed)return;if(!start)start=now;
-  const t=Math.min(1,(now-start)/HOME_DURATION);pos=from+(target-from)*focusEase(t);paint();
+  const t=Math.min(1,(now-start)/duration);pos=from+(target-from)*(duration===HOME_DURATION?focusEase(t):t*t*(3-2*t));paint();
   if(t<1)frame=requestAnimationFrame(tick);else{pos=target;paint();start=0;schedule()}
  }
  function go(next,user=true){
-  if(disposed)return;stop();cancelAnimationFrame(frame);frame=0;start=0;from=pos;
+  if(disposed)return;duration=user?HOME_DURATION:2400;stop();cancelAnimationFrame(frame);frame=0;start=0;from=pos;
   index=wrap(Math.round(next));target=Math.round(pos+focusOffset(index,pos,count));infoAnimation?.cancel();sync(user);
   if(reduce.matches||Math.abs(target-pos)<.001){pos=target;paint();schedule()}
   else{frame=requestAnimationFrame(tick);infoAnimation=panels[index].animate?.([{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:360,easing:'cubic-bezier(.33,0,0,1)'})}
  }
+ listen(rotation,'click',()=>{paused=!paused;schedule()});
+ listen(stage,'pointerenter',ev=>{if(ev.pointerType==='mouse'){hoverStage=true;schedule()}});
+ listen(stage,'pointerleave',()=>{hoverStage=false;schedule()});
  listen(root,'click',ev=>{
   if(performance.now()<suppressUntil&&ev.target.closest(attr('item'))){ev.preventDefault();return}
   if(ev.target.closest(attr('prev')))go(target-1);
@@ -63,7 +70,7 @@ export function bindHomeShowroom(host,options={}){
   if(ev.ctrlKey||ev.altKey||ev.metaKey||!['ArrowLeft','ArrowRight','Home','End'].includes(ev.key))return;ev.preventDefault();
   go(ev.key==='Home'?0:ev.key==='End'?count-1:target+(ev.key==='ArrowRight'?1:-1));
  });
- listen(stage,'pointerdown',ev=>{if(ev.button!==0||ev.isPrimary===false||ev.target.closest('.hs-arrows,.gf-arrows')||count<2)return;drag={id:ev.pointerId,x:ev.clientX,y:ev.clientY};stop()});
+ listen(stage,'pointerdown',ev=>{if(ev.button!==0||ev.isPrimary===false||ev.target.closest('.hs-arrows,.gf-arrows,.showroom-playback')||count<2)return;drag={id:ev.pointerId,x:ev.clientX,y:ev.clientY};stop()});
  listen(document,'pointerup',ev=>{
   if(!drag||drag.id!==ev.pointerId)return;const dx=ev.clientX-drag.x,dy=ev.clientY-drag.y;drag=null;
   if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)){suppressUntil=performance.now()+450;go(target+(dx<0?1:-1))}else schedule();
@@ -76,5 +83,5 @@ export function bindHomeShowroom(host,options={}){
  const observer=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;schedule()},{threshold:.15});observer.observe(stage);
  root.querySelectorAll(attr('prev')+','+attr('next')).forEach(b=>b.disabled=count<2);
  sync(false);paint();schedule();
- return ()=>{disposed=true;abort.abort();stop();cancelAnimationFrame(frame);infoAnimation?.cancel();size.disconnect();observer.disconnect()};
+ return ()=>{disposed=true;abort.abort();stop();cancelAnimationFrame(frame);infoAnimation?.cancel();size.disconnect();observer.disconnect();rotation.remove()};
 }

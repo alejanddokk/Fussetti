@@ -5,7 +5,7 @@ import {classifyOfficial} from './official-taxonomy.mjs';
 import {buyButton} from './product-views.mjs';
 import {homePurchaseSupport} from './hogar-purchase-support.mjs';
 import {combinationMoney} from './hogar-combo-views.mjs';
-import {bindHomeShowroom} from './hogar-showroom-motion.mjs';
+import {bindHomeShowroom} from './hogar-showroom-motion.mjs?v=deslizamiento1';
 import {focusPose} from './moto-focus.mjs';
 import {e,icon} from '../nueva/ui.mjs';
 

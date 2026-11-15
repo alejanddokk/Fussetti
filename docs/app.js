@@ -1,16 +1,16 @@
-import { createGallery, productShot } from "./gallery.js";
+import { createGallery, productShot } from "./gallery.js?v=deslizamiento1";
 
 const shop = "./alternativa/";
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const desktopPointer = matchMedia("(pointer: fine) and (min-width: 741px)");
 
 const pieces = [
-  { scene: "wave", category: "Motos", title: "Honda Wave 110 S", word: "WAVE", description: "Tu próximo camino.", image: "wave-110-transparent.webp", route: "#producto/honda-wave-110-s" },
-  { scene: "philips", category: "TV y audio", title: "Smart TV Philips 50″", word: "PHILIPS", description: "Pantalla de 50″ · UHD 4K", image: "philips.jpg", route: "#producto/hogar-3-1" },
-  { scene: "rca", category: "Climatización", title: "Aire acondicionado RCA", word: "RCA", description: "5400 W · Frío / calor", image: "rca.jpg", route: "#producto/cyber-3081", offer: { name: "Aire acondicionado RCA 5400 W", old: "$ 1.061.800,00", price: "$ 1.000.000,00", installments: "$ 333.333,33" } },
-  { scene: "viking", category: "Bicicletas", title: "Viking X Jump", word: "VIKING", description: "Aluminio · 8 velocidades · Rodado 26", image: "viking.png", route: "#producto/cyber-3515", offer: { name: "Bicicleta Viking X Jump R26", old: "$ 833.500,00", price: "$ 816.500,00", installments: "$ 272.166,66" } },
-  { scene: "oven", category: "Hornos eléctricos", title: "Horno eléctrico Kanji", word: "KANJI", description: "100 litros · HE100G", image: "kanji-oven.png", route: "#producto/hogar-0-1", offer: { name: "Horno eléctrico Kanji 100 L", old: "$ 260.300,00", price: "$ 234.270,00", installments: "$ 78.090,00" } },
-  { scene: "fridge", category: "Heladeras", title: "Heladera Kanji 138 L", word: "KANJI", description: "138 litros · Sistema cíclico", image: "kanji-fridge.jpg", route: "#producto/cyber-3703", offer: { name: "Heladera Kanji 138 L", old: "$ 462.300,00", price: "$ 437.300,00", installments: "$ 145.766,66" } }
+  { scene: "wave", category: "Motos", title: "Honda Wave 110 S", description: "Tu próximo camino.", image: "wave-110-transparent.webp", route: "#producto/honda-wave-110-s" },
+  { scene: "philips", category: "TV y audio", title: "Smart TV Philips 50″", description: "Pantalla de 50″ · UHD 4K", image: "philips.jpg", route: "#producto/hogar-3-1" },
+  { scene: "rca", category: "Climatización", title: "Aire acondicionado RCA", description: "5400 W · Frío / calor", image: "rca.jpg", route: "#producto/cyber-3081", offer: { name: "Aire acondicionado RCA 5400 W", old: "$ 1.061.800,00", price: "$ 1.000.000,00", installments: "$ 333.333,33" } },
+  { scene: "viking", category: "Bicicletas", title: "Viking X Jump", description: "Aluminio · 8 velocidades · Rodado 26", image: "viking.png", route: "#producto/cyber-3515", offer: { name: "Bicicleta Viking X Jump R26", old: "$ 833.500,00", price: "$ 816.500,00", installments: "$ 272.166,66" } },
+  { scene: "oven", category: "Hornos eléctricos", title: "Horno eléctrico Kanji", description: "100 litros · HE100G", image: "kanji-oven.png", route: "#producto/hogar-0-1", offer: { name: "Horno eléctrico Kanji 100 L", old: "$ 260.300,00", price: "$ 234.270,00", installments: "$ 78.090,00" } },
+  { scene: "fridge", category: "Heladeras", title: "Heladera Kanji 138 L", description: "138 litros · Sistema cíclico", image: "kanji-fridge.jpg", route: "#producto/cyber-3703", offer: { name: "Heladera Kanji 138 L", old: "$ 462.300,00", price: "$ 437.300,00", installments: "$ 145.766,66" } }
 ];
 
 const departments = [
@@ -92,15 +92,6 @@ document.addEventListener("keydown", event => {
 });
 
 if (!reduceMotion.matches) {
-  try {
-    if (!location.hash || location.hash === "#inicio") {
-      if (!sessionStorage.getItem("fussetti-intro-v2")) {
-        document.documentElement.classList.add("is-intro");
-        sessionStorage.setItem("fussetti-intro-v2", "seen");
-      }
-    }
-  } catch {}
-
   for (const heading of document.querySelectorAll(".section-head h2, .campaign-head h2, .support h2")) {
     const lines = heading.innerHTML.split(/<br\s*\/?\s*>/i);
     heading.replaceChildren(...lines.flatMap((line, index) => {

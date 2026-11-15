@@ -41,7 +41,7 @@ export function motoDetails(s,p){
 function modelSlide(s,p,i,total){
  return `<article class="moto-slide" data-moto-slide="${e(p.id)}" data-active="${i===0}" role="group" aria-roledescription="diapositiva" aria-label="${i+1} de ${total}: ${e(p.name)}" ${i?'hidden inert aria-hidden="true"':''}>
  <div class="container moto-slide-inner"><div class="moto-slide-copy">${motoDetails(s,p)}</div>
- <div class="moto-slide-visual"><span class="moto-model-watermark" aria-hidden="true">${e(name(p))}</span><img src="${e(photo(p))}" alt="${e(p.name)}" class="${photos[p.id]?'moto-photo-hd':'moto-photo-original'}" draggable="false" ${i?'loading="lazy"':'fetchpriority="high"'}><span class="moto-photo-note">Imagen del modelo publicado · confirmá versión y disponibilidad</span></div></div></article>`;
+ <a class="moto-slide-visual" href="#producto/${encodeURIComponent(p.id)}" draggable="false" aria-label="Ver ficha de ${e(p.name)}"><span class="moto-model-watermark" aria-hidden="true">${e(name(p))}</span><img src="${e(photo(p))}" alt="${e(p.name)}" class="${photos[p.id]?'moto-photo-hd':'moto-photo-original'}" draggable="false" ${i?'loading="lazy"':'fetchpriority="high"'}><span class="moto-photo-note">Imagen del modelo publicado · confirmá versión y disponibilidad</span></a></div></article>`;
 }
 export function showroomView(s){
  const models=showroomModels(s);
@@ -50,7 +50,7 @@ export function showroomView(s){
  <div class="moto-carousel-window" tabindex="0" aria-label="Modelos. Usá las flechas izquierda y derecha para cambiar; Escape detiene el avance automático."><div class="moto-carousel-slides">${models.map((p,i)=>modelSlide(s,p,i,models.length)).join('')}</div></div>
  <div class="container moto-carousel-controls"><span class="moto-carousel-count" aria-live="polite" aria-atomic="true"><b data-moto-counter>01</b><span>/ ${String(models.length).padStart(2,'0')}</span><span data-moto-name>${e(name(models[0]))}</span></span>
  <span class="moto-carousel-track" aria-hidden="true"><i data-moto-position style="width:${100/models.length}%"></i></span>
- <div><button type="button" data-moto-prev aria-label="Modelo anterior">${icon('arrow',21)}</button><button type="button" data-moto-next aria-label="Modelo siguiente">${icon('arrow',21)}</button></div></div>
+ <div><button type="button" class="moto-rotation" data-moto-rotation>Pausar</button><button type="button" data-moto-prev aria-label="Modelo anterior">${icon('arrow',21)}</button><button type="button" data-moto-next aria-label="Modelo siguiente">${icon('arrow',21)}</button></div></div>
  <div class="moto-model-selector container" aria-label="Seleccionar modelo">${models.map((p,i)=>`<button type="button" data-moto-index="${i}" ${i===0?'aria-current="true"':''} aria-label="Ver ${e(p.name)}"><small aria-hidden="true">${String(i+1).padStart(2,'0')}</small><img src="${e(photo(p))}" alt="" loading="lazy"><span>${e(name(p))}</span></button>`).join('')}</div></section>`:
  '<section class="container page empty"><h2>El próximo camino está por llegar.</h2><p>En este escenario todavía no hay modelos de moto cargados.</p><a class="button" href="#consulta?motos=1">Preparar consulta demo</a></section>';
  return `<div class="moto-showroom"><h1 class="moto-sr">Modelos Honda en Fussetti</h1>${carousel}${motoJourneyView(s)}</div>`;

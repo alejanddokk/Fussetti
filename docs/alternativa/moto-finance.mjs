@@ -3,24 +3,13 @@ import {LENDERS} from './moto-lenders.mjs?v=credit-options1';
    See references/horizonx/motion-focus.html. Native, readable, manual carousels. */
 import {e,icon} from '../nueva/ui.mjs';
 import {money,unitPrice} from './domain.mjs';
-import {showroomModels,motoName,motoPhoto} from './moto-showroom.mjs?v=responsive1';
-import {focusFrames} from './moto-focus.mjs?v=thumb-follow1';
+import {showroomModels,motoName,motoPhoto} from './moto-showroom.mjs?v=deslizamiento1';
+import {focusFrames} from './moto-focus.mjs?v=deslizamiento1';
 
-export const FINANCE_DELAY=5000,FINANCE_SEEN='fussetti-alternativa-finance-seen-v1';
 export function financeRoute(r){
  const page=r.path[0],q=r.q;
  if(['motos','motos-focus'].includes(page))return page;
  return page==='catalogo'&&(q.get('cat')==='Motos'||q.get('tipo')==='motorcycle')&&!q.get('q')&&!q.has('ofertas')&&!q.get('orden')?'catalogo-motos':'';
-}
-// Count foreground reading time only. Leaving the showroom starts a fresh visit.
-export function createFinanceDelay({onReady,now=()=>performance.now(),setTimer=setTimeout,clearTimer=clearTimeout}){
- let key='',remaining=FINANCE_DELAY,started=null,timer=0,shown=false,disposed=false;
- function pause(){if(timer)clearTimer(timer);timer=0;if(started!==null){remaining=Math.max(0,remaining-(now()-started));started=null}}
- return {update({route,visible=true,blocked=false,seen=false}){
-  if(disposed)return;pause();if(route!==key){key=route;remaining=FINANCE_DELAY}
-  if(!key||!visible||blocked||seen||shown)return;
-  started=now();timer=setTimer(()=>{timer=0;started=null;remaining=0;shown=true;onReady()},remaining);
- },destroy(){disposed=true;pause()}};
 }
 // Public sales contact from motos.fussetti.com, checked 2026-11-04.
 export const MOTO_SALES_PHONE='5493412763577';
@@ -52,23 +41,20 @@ export function financeView(s,selectedId='',intent='finance',lenderId=''){
  <p class="mf-credit-destination">Ventas de motos · +54 9 341 276-3577</p><p class="mf-credit-handoff">Abrís el WhatsApp real de Fussetti. Revisá el mensaje antes de enviarlo.</p>
  <button class="mf-credit-keep" type="button" data-credit-close>Seguir viendo motos</button><p class="mf-credit-terms">Precio, disponibilidad y condiciones de financiación a confirmar con el asesor.</p></div></div></div>`;
 }
-export function createMotoFinance(s,doc=document,storage){
+export function createMotoFinance(s,doc=document){
  const dialog=doc.querySelector('#moto-credit-dialog'),media=matchMedia('(prefers-reduced-motion: reduce)');
- let root=null,routeKey='',seen=false,returnFocus=null,bindings=null,animations=[],model=0,models=[],intent='finance',lenderChoice='';
- try{storage??=globalThis.sessionStorage;seen=storage.getItem(FINANCE_SEEN)==='1'}catch{}
+ let root=null,routeKey='',returnFocus=null,bindings=null,animations=[],model=0,models=[],intent='finance',lenderChoice='';
  const listen=(node,type,fn)=>node?.addEventListener(type,fn,{signal:bindings.signal});
  const cancelAnimations=()=>{animations.forEach(a=>a?.cancel());animations=[]};
  function animate(node,frames){if(!media.matches&&node?.animate)animations.push(node.animate(frames,{duration:500,easing:'cubic-bezier(.33,0,0,1)'}))}
- function resume(){delay.update({route:routeKey,visible:!doc.hidden,blocked:!!doc.querySelector('dialog[open]'),seen})}
  function close(){if(dialog.open)dialog.close()}
  function show(lenderId='',modelId=''){
-  if(!routeKey||doc.hidden||doc.querySelector('dialog[open]')){resume();return}
-  seen=true;try{storage.setItem(FINANCE_SEEN,'1')}catch{}
+  if(!routeKey||doc.hidden||doc.querySelector('dialog[open]'))return;
   lenderChoice=typeof lenderId==='string'&&LENDERS.some(l=>l.id===lenderId)?lenderId:'';if(lenderChoice)intent='finance';
   returnFocus=doc.activeElement;models=showroomModels(s);const active=root.querySelector('[data-focus-summary]:not([hidden]),[data-moto-slide][data-active="true"]');
   const id=models.some(p=>p.id===modelId)?modelId:active?.dataset.model||active?.dataset.motoSlide;model=Math.max(0,models.findIndex(p=>p.id===id));
   bindings?.abort();bindings=new AbortController();dialog.innerHTML=financeView(s,models[model]?.id,intent,lenderChoice);dialog.showModal();
-  listen(dialog,'close',()=>{cancelAnimations();bindings.abort();if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});resume()});
+  listen(dialog,'close',()=>{cancelAnimations();bindings.abort();if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true})});
   dialog.querySelectorAll('[data-credit-close]').forEach(b=>listen(b,'click',close));
   listen(dialog,'click',ev=>{if(ev.target===dialog){const r=dialog.getBoundingClientRect();if(ev.clientX<r.left||ev.clientX>r.right||ev.clientY<r.top||ev.clientY>r.bottom)close()}});
   function syncMessage(){const p=models[model];dialog.querySelector('[data-credit-message]').textContent=salesMessage(p,intent,lenderChoice);dialog.querySelector('[data-credit-cta]').href=salesHref(p,intent,lenderChoice)}
@@ -76,10 +62,7 @@ export function createMotoFinance(s,doc=document,storage){
   listen(dialog.querySelector('.mf-credit-model-track'),'keydown',ev=>{if(['ArrowLeft','ArrowRight'].includes(ev.key)){ev.preventDefault();choose(model+(ev.key==='ArrowRight'?1:-1))}});
   dialog.querySelectorAll('[name="moto-credit-intent"]').forEach(input=>listen(input,'change',()=>{intent=input.value;syncMessage()}));
   dialog.querySelectorAll('[data-credit-model-id]').forEach(b=>listen(b,'click',()=>choose(models.findIndex(p=>p.id===b.dataset.creditModelId))));listen(dialog.querySelector('[data-credit-model-prev]'),'click',()=>choose(model-1));listen(dialog.querySelector('[data-credit-model-next]'),'click',()=>choose(model+1));
-  dialog.querySelector('[data-credit-close]').focus();animate(dialog.querySelector('.mf-credit-shell'),[{opacity:0,transform:'translateY(18px) scale(.97)'},{opacity:1,transform:'translateY(0) scale(1)'}]);resume();
+  dialog.querySelector('[data-credit-close]').focus();animate(dialog.querySelector('.mf-credit-shell'),[{opacity:0,transform:'translateY(18px) scale(.97)'},{opacity:1,transform:'translateY(0) scale(1)'}]);
  }
- const delay=createFinanceDelay({onReady:show});
- const visibility=()=>resume();doc.addEventListener('visibilitychange',visibility);
- const observer=new MutationObserver(resume);observer.observe(doc.body,{subtree:true,attributes:true,attributeFilter:['open']});
- return {update(nextRoot,r){const next=financeRoute(r);if(next!==routeKey)close();routeKey=next;root=nextRoot;const brand=root.querySelector('.moto-carousel-branding,.mf-moto-branding');if(next&&brand){let button=brand.querySelector('[data-open-credit]');if(!button){button=doc.createElement('button');button.type='button';button.dataset.openCredit='';button.className='moto-credit-trigger';button.textContent='Financiación';brand.append(button)}}root.querySelectorAll('[data-open-credit]').forEach(b=>{b.onclick=()=>show(b.dataset.creditLender||'',b.dataset.creditModel||'')});resume()},destroy(){routeKey='';close();bindings?.abort();cancelAnimations();delay.destroy();observer.disconnect();doc.removeEventListener('visibilitychange',visibility)}};
+ return {update(nextRoot,r){const next=financeRoute(r);if(next!==routeKey)close();routeKey=next;root=nextRoot;const brand=root.querySelector('.moto-carousel-branding,.mf-moto-branding');if(next&&brand){let button=brand.querySelector('[data-open-credit]');if(!button){button=doc.createElement('button');button.type='button';button.dataset.openCredit='';button.className='moto-credit-trigger';button.textContent='Financiación';brand.append(button)}}root.querySelectorAll('[data-open-credit]').forEach(b=>{b.onclick=()=>show(b.dataset.creditLender||'',b.dataset.creditModel||'')})},destroy(){routeKey='';close();bindings?.abort();cancelAnimations()}};
 }

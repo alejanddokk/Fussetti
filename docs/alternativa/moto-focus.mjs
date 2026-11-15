@@ -4,10 +4,10 @@ import {motoJourneyView} from './moto-journey.mjs?v=credit-options1';
 /* Motion Focus adapted from HorizonX. Original complete export retained in
    references/horizonx/motion-focus.html. Translation, role scaling and its
    Newton-refined bezier are adapted to native DOM rather than a GSAP loop. */
-import {showroomModels,motoPhoto,motoName,motoDetails} from './moto-showroom.mjs?v=responsive1';
+import {showroomModels,motoPhoto,motoName,motoDetails} from './moto-showroom.mjs?v=deslizamiento1';
 import {e,icon} from '../nueva/ui.mjs';
 
-export const FOCUS_DURATION=800,FOCUS_INTERVAL=7200,FOCUS_SIDE_SCALE=1/1.44001;
+export const FOCUS_DURATION=800,FOCUS_INTERVAL=7800,FOCUS_SIDE_SCALE=1/1.44001;
 const wrap=(n,m)=>m?((n%m)+m)%m:0;
 // Separate alpha cutouts keep the source photos intact for the individual view.
 // Viewports normalize visible height and the wheel baseline, not raster opacity.
@@ -30,9 +30,9 @@ export function focusView(s){
  if(!models.length)return '<section class="container page empty"><h1>Todavía no hay motos en este escenario.</h1><a class="button" href="#consulta?motos=1">Preparar consulta demo</a></section>';
  return `<div class="moto-showroom moto-focus-showroom"><section class="mf-motos" data-moto-focus aria-roledescription="carrusel" aria-label="Modelos Honda en fila">
  <div class="container mf-moto-branding"><a href="../" aria-label="Volver a Fussetti"><img src="https://fussetti-replica-20261102.germanvives15.chatgpt.site/motos/assets/1e1516fa4fa9500a.png" alt="Fussetti"></a><span class="mf-honda"><img src="https://fussetti-replica-20261102.germanvives15.chatgpt.site/alternativa/assets/motos/honda-logo.svg" alt="Honda"></span></div>
- <div class="container mf-moto-intro"><h1>Tu próxima moto, en primer plano.</h1><span>Elegí un modelo y conocé sus posibilidades.</span></div>
+ <div class="container mf-moto-intro"><h1>Tu próxima moto, en primer plano.</h1><button type="button" class="moto-rotation" data-moto-rotation>Pausar</button></div>
  <div class="mf-moto-stage" tabindex="0" aria-label="Motos en fila. Usá las flechas para elegir, Inicio o Fin para ir a los extremos y Escape para detener el avance automático.">
- ${models.map((p,i)=>`<button class="mf-moto-bike" type="button" data-focus-bike="${i}" data-model="${e(p.id)}" aria-label="Ver ${e(p.name)} en primer plano" aria-pressed="${i===0}" ${i>1&&i!==models.length-1?'tabindex="-1"':''} style="${i===0?'':'visibility:hidden;'}"><span class="mf-bike-shadow" aria-hidden="true"></span>${bikeImage(p)}<span class="mf-bike-caption" aria-hidden="true">${e(motoName(p))} ${icon('arrow',12)}</span></button>`).join('')}
+ ${models.map((p,i)=>`<a class="mf-moto-bike" href="#producto/${encodeURIComponent(p.id)}" draggable="false" data-focus-bike="${i}" data-model="${e(p.id)}" aria-label="Ver ficha de ${e(p.name)}" ${i>1&&i!==models.length-1?'tabindex="-1"':''} style="${i===0?'':'visibility:hidden;'}"><span class="mf-bike-shadow" aria-hidden="true"></span>${bikeImage(p)}<span class="mf-bike-caption" aria-hidden="true">${e(motoName(p))} ${icon('arrow',12)}</span></a>`).join('')}
  <span class="mf-moto-count moto-sr" aria-live="polite" aria-atomic="true"><b data-focus-count>01</b><span>/ ${String(models.length).padStart(2,'0')}</span><span data-focus-label>${e(motoName(models[0]))}</span></span><div class="mf-moto-arrows"><button type="button" data-focus-prev aria-label="Moto anterior">${icon('arrow',20)}</button><button type="button" data-focus-next aria-label="Moto siguiente">${icon('arrow',20)}</button></div></div>
  <div class="container mf-moto-details">${models.map((p,i)=>`<article class="mf-moto-summary" data-focus-summary="${i}" data-model="${e(p.id)}" ${i?'hidden inert aria-hidden="true"':''}>${motoDetails(s,p)}</article>`).join('')}</div>
  <div class="container mf-moto-selector" aria-label="Elegir modelo de moto">${models.map((p,i)=>`<button type="button" data-focus-select="${i}" aria-label="Seleccionar ${e(p.name)}" ${i===0?'aria-current="true"':''}><small aria-hidden="true">${String(i+1).padStart(2,'0')}</small><img src="${e(focusFrames[p.id]?.src||motoPhoto(p))}" alt="" loading="lazy"><span>${e(motoName(p))}</span></button>`).join('')}</div>
@@ -60,9 +60,10 @@ export function focusPose(offset,width){
 export function bindMotoFocus(root){
  const gallery=root.querySelector('[data-moto-focus]');if(!gallery)return ()=>{};
  const stage=gallery.querySelector('.mf-moto-stage'),bikes=[...gallery.querySelectorAll('[data-focus-bike]')],panels=[...gallery.querySelectorAll('[data-focus-summary]')],selectors=[...gallery.querySelectorAll('[data-focus-select]')];
+ const rotation=gallery.querySelector('[data-moto-rotation]');
  const count=bikes.length;if(!count)return ()=>{};
  const media=matchMedia('(prefers-reduced-motion: reduce)'),cleanups=[];
- let index=Math.max(0,bikes.findIndex(n=>n.dataset.model===selectedMotoModel())),pos=index,target=index,frame=0,timer=0,start=0,from=pos,drag=null,manual=false,hover=false,focused=false,visible=true,disposed=false,suppressUntil=0,infoAnimation=null;
+ let index=Math.max(0,bikes.findIndex(n=>n.dataset.model===selectedMotoModel())),pos=index,target=index,frame=0,timer=0,start=0,from=pos,drag=null,paused=false,hover=false,focused=false,visible=true,disposed=false,suppressUntil=0,infoAnimation=null,duration=FOCUS_DURATION;
  const listen=(node,type,fn,opts)=>{node.addEventListener(type,fn,opts);cleanups.push(()=>node.removeEventListener(type,fn,opts))};
  const stop=()=>{clearTimeout(timer);timer=0};
  function paint(){
@@ -85,17 +86,18 @@ export function bindMotoFocus(root){
   gallery.querySelector('[data-focus-label]').textContent=label;
  }
  function schedule(){
-  stop();const running=!disposed&&!manual&&!media.matches&&!hover&&!focused&&visible&&!document.hidden&&!drag&&count>1;
+  stop();const running=!disposed&&!paused&&!media.matches&&!hover&&!focused&&visible&&!document.hidden&&!document.querySelector('dialog[open]')&&!drag&&count>1;
+  rotation.hidden=media.matches||count<2;rotation.textContent=paused?'Reanudar':'Pausar';
   gallery.dataset.autoplay=String(running);gallery.querySelector('.mf-moto-count').setAttribute('aria-live',running?'off':'polite');
   if(running)timer=setTimeout(()=>go(Math.round(target)+1,false),FOCUS_INTERVAL);
  }
  function tick(now){
   frame=0;if(disposed)return;if(!start)start=now;
-  const t=Math.min(1,(now-start)/FOCUS_DURATION);pos=from+(target-from)*focusEase(t);paint();
+  const t=Math.min(1,(now-start)/duration);pos=from+(target-from)*(duration===FOCUS_DURATION?focusEase(t):t*t*(3-2*t));paint();
   if(t<1)frame=requestAnimationFrame(tick);else{pos=target;paint();start=0;schedule()}
  }
  function go(next,user=true){
-  if(disposed)return;if(user)manual=true;stop();cancelAnimationFrame(frame);frame=0;start=0;from=pos;index=wrap(Math.round(next),count);target=Math.round(pos+focusOffset(index,pos,count));
+  if(disposed)return;duration=user?FOCUS_DURATION:2400;stop();cancelAnimationFrame(frame);frame=0;start=0;from=pos;index=wrap(Math.round(next),count);target=Math.round(pos+focusOffset(index,pos,count));
   infoAnimation?.cancel();sync();
   if(media.matches||Math.abs(target-pos)<.001){pos=target;paint();schedule()}
   else{frame=requestAnimationFrame(tick);infoAnimation=panels[index].animate?.([{opacity:0,transform:'translateY(9px)'},{opacity:1,transform:'translateY(0)'}],{duration:400,easing:'cubic-bezier(.33,0,0,1)'})}
@@ -105,16 +107,17 @@ export function bindMotoFocus(root){
  }
  listen(gallery.querySelector('[data-focus-prev]'),'click',()=>go(Math.round(target)-1));
  listen(gallery.querySelector('[data-focus-next]'),'click',()=>go(Math.round(target)+1));
- bikes.forEach((b,i)=>listen(b,'click',ev=>{if(performance.now()<suppressUntil){ev.preventDefault();return}choose(i)}));
+ bikes.forEach(b=>listen(b,'click',ev=>{if(ev.detail&&performance.now()<suppressUntil)ev.preventDefault()}));
+ listen(rotation,'click',()=>{paused=!paused;schedule()});
  selectors.forEach((b,i)=>listen(b,'click',()=>choose(i)));
  listen(stage,'keydown',ev=>{
   if(['ArrowLeft','ArrowRight','Home','End','Escape'].includes(ev.key)){
-   ev.preventDefault();if(ev.key==='Escape'){manual=true;schedule();return}
+   ev.preventDefault();if(ev.key==='Escape'){paused=true;schedule();return}
    if(ev.key==='Home')choose(0);else if(ev.key==='End')choose(count-1);else go(Math.round(target)+(ev.key==='ArrowRight'?1:-1));
   }
  });
- listen(gallery,'pointerenter',ev=>{if(ev.pointerType==='mouse'){hover=true;schedule()}});listen(gallery,'pointerleave',()=>{hover=false;schedule()});
- listen(gallery,'focusin',()=>{focused=true;schedule()});listen(gallery,'focusout',ev=>{focused=gallery.contains(ev.relatedTarget);schedule()});
+ listen(stage,'pointerenter',ev=>{if(ev.pointerType==='mouse'){hover=true;schedule()}});listen(stage,'pointerleave',()=>{hover=false;schedule()});
+ listen(gallery,'focusin',()=>{focused=document.activeElement!==rotation;schedule()});listen(gallery,'focusout',ev=>{focused=gallery.contains(ev.relatedTarget)&&ev.relatedTarget!==rotation;schedule()});
  listen(stage,'pointerdown',ev=>{
   if(drag||ev.button!==0||ev.isPrimary===false||count<2)return;
   drag={id:ev.pointerId,x:ev.clientX,y:ev.clientY,lastX:ev.clientX,lastT:performance.now(),base:pos,velocity:0,moved:false};stop();
@@ -125,7 +128,7 @@ export function bindMotoFocus(root){
   if(!drag.moved){
    if(Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>12){drag=null;schedule();return}
    if(Math.abs(dx)<12)return;
-   cancelAnimationFrame(frame);frame=0;drag.base=pos;drag.moved=true;manual=true;gallery.dataset.dragging='true';
+   cancelAnimationFrame(frame);frame=0;drag.base=pos;drag.moved=true;gallery.dataset.dragging='true';
    try{stage.setPointerCapture(ev.pointerId)}catch{}
   }
   const now=performance.now(),pitch=Math.min(480,Math.max(120,stage.clientWidth*.31));
@@ -142,8 +145,8 @@ export function bindMotoFocus(root){
  };
  // Document listeners also release a short press that leaves the stage before
  // pointer capture starts, without swallowing normal clicks on a side model.
- listen(document,'pointerup',ev=>finish(ev));listen(document,'pointercancel',ev=>finish(ev,true));listen(stage,'lostpointercapture',ev=>finish(ev,true));
- listen(document,'visibilitychange',schedule);
+ listen(document,'pointerup',ev=>finish(ev));listen(document,'pointercancel',ev=>finish(ev,true));listen(stage,'lostpointercapture',ev=>{if(ev.target===stage)finish(ev,true)});
+ listen(document,'visibilitychange',schedule);listen(document,'close',schedule,true);
  listen(media,'change',()=>{const id=drag?.id;drag=null;delete gallery.dataset.dragging;cancelAnimationFrame(frame);frame=0;infoAnimation?.cancel();pos=target;paint();try{if(id!==undefined&&stage.hasPointerCapture(id))stage.releasePointerCapture(id)}catch{}schedule()});
  const resize=new ResizeObserver(()=>paint());resize.observe(stage);cleanups.push(()=>resize.disconnect());
  const intersection=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;schedule()},{threshold:.2});intersection.observe(gallery);cleanups.push(()=>intersection.disconnect());

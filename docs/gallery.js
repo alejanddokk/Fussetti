@@ -9,7 +9,6 @@ export function createGallery(pieces, shop, reducedMotion) {
   const gallery = document.querySelector(".gallery");
   const viewport = gallery.querySelector(".gallery-viewport");
   const track = gallery.querySelector(".gallery-track");
-  const word = gallery.querySelector(".gallery-word");
   const lamp = gallery.querySelector(".gallery-lamp");
   const thumbList = gallery.querySelector(".gallery-thumbs");
   const count = gallery.querySelector("#stage-count");
@@ -17,29 +16,28 @@ export function createGallery(pieces, shop, reducedMotion) {
   const category = gallery.querySelector("#piece-category");
   const details = gallery.querySelector("#piece-sub");
   const link = gallery.querySelector("#piece-link");
-  const dialog = document.querySelector("#showroom-photo");
-  const photoTitle = dialog.querySelector("h2");
-  const zoomPhoto = dialog.querySelector("[data-zoom-photo]");
+  const rotation = gallery.querySelector("[data-gallery-rotation]");
+  const caption = name.parentElement;
   let selected = 0;
   let position = 0;
   let width = viewport.clientWidth;
   let drag = null;
   let blockedClick = false;
   let captionAnimation;
-  let wordAnimation;
+  let timer;
+  let inView = false;
+  let hovered = false;
+  let paused = false;
   let lightAnimation;
 
   const surfaces = pieces.map((piece, index) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "gallery-item";
-    button.dataset.slot = index;
-    button.innerHTML = productShot(piece, "", index < 2 || index === pieces.length - 1 ? "eager" : "lazy");
-    button.addEventListener("click", () => {
-      if (index === selected) openPhoto();
-      else goTo(index);
-    });
-    return button;
+    const product = document.createElement("a");
+    product.className = "gallery-item";
+    product.href = shop + piece.route;
+    product.draggable = false;
+    product.setAttribute("aria-label", "Ver ficha de " + piece.title);
+    product.innerHTML = productShot(piece, "", index < 2 || index === pieces.length - 1 ? "eager" : "lazy");
+    return product;
   });
   track.replaceChildren(...surfaces);
 
@@ -78,8 +76,6 @@ export function createGallery(pieces, shop, reducedMotion) {
 
   function updateSelection(animate) {
     const piece = pieces[selected];
-    gallery.dataset.scene = piece.scene;
-    word.textContent = piece.word;
     count.textContent = label(selected) + " / " + String(pieces.length).padStart(2, "0");
     name.textContent = piece.title;
     category.textContent = piece.category;
@@ -91,13 +87,11 @@ export function createGallery(pieces, shop, reducedMotion) {
       const active = index === selected;
       surface.tabIndex = active ? 0 : -1;
       surface.dataset.active = String(active);
-      surface.setAttribute("aria-label", (active ? "Ampliar foto de " : "Mostrar ") + pieces[index].title);
     });
     if (animate && !reducedMotion.matches) {
       captionAnimation?.cancel();
-      wordAnimation?.cancel();
       lightAnimation?.cancel();
-      captionAnimation = name.parentElement.animate(
+      captionAnimation = caption.animate(
         [{ opacity: .25, transform: "translateY(8px)" }, { opacity: 1, transform: "translateY(0)" }],
         { duration: 420, easing: "cubic-bezier(.19,.72,.25,1)" }
       );
@@ -105,37 +99,42 @@ export function createGallery(pieces, shop, reducedMotion) {
         [{ opacity: .5 }, { opacity: 1.12, offset: .42 }, { opacity: 1 }],
         { duration: 650, easing: "ease-out" }
       );
-      wordAnimation = word.animate(
-        [{ opacity: 0, transform: "translate(-48%,8px)" }, { opacity: 1, transform: "translate(-50%,0)" }],
-        { duration: 590, easing: "cubic-bezier(.19,.72,.25,1)" }
-      );
     }
   }
 
-  function goTo(index) {
+  function schedule() {
+    clearTimeout(timer);
+    const focused = gallery.contains(document.activeElement) && document.activeElement !== rotation;
+    const running = !paused && !reducedMotion.matches && inView && !hovered && !focused && !drag && !document.hidden;
+    caption.setAttribute("aria-live", running ? "off" : "polite");
+    rotation.hidden = reducedMotion.matches;
+    rotation.textContent = paused ? "Reanudar" : "Pausar";
+    if (running) timer = setTimeout(() => goTo(selected + 1, true), 7800);
+  }
+
+  function goTo(index, automatic = false) {
     const next = wrap(index, pieces.length);
     const changed = next !== selected;
     const transferFocus = surfaces.includes(document.activeElement);
+    gallery.dataset.gliding = String(automatic);
     selected = next;
     position = next;
     if (changed) updateSelection(true);
     paint();
     if (transferFocus) surfaces[selected].focus({ preventScroll: true });
+    schedule();
   }
 
-  function openPhoto() {
-    const piece = pieces[selected];
-    photoTitle.textContent = piece.title;
-    zoomPhoto.innerHTML = productShot(piece, piece.title, "eager");
-    dialog.showModal();
-  }
 
   function release(event, cancelled = false) {
     if (!drag || event.pointerId !== drag.id) return;
     const movement = drag;
     drag = null;
     gallery.dataset.dragging = "false";
-    if (!movement.active) return;
+    if (!movement.active) {
+      schedule();
+      return;
+    }
     if (viewport.hasPointerCapture(event.pointerId)) viewport.releasePointerCapture(event.pointerId);
     const distance = movement.startX - event.clientX;
     const velocity = (movement.startX - movement.lastX) / Math.max(1, performance.now() - movement.startTime);
@@ -148,6 +147,7 @@ export function createGallery(pieces, shop, reducedMotion) {
     if (!event.isPrimary || event.button !== 0 || drag) return;
     blockedClick = false;
     drag = { id: event.pointerId, startX: event.clientX, startY: event.clientY, lastX: event.clientX, startTime: performance.now(), active: false };
+    schedule();
   });
   viewport.addEventListener("pointermove", event => {
     if (!reducedMotion.matches && event.pointerType === "mouse") {
@@ -164,6 +164,7 @@ export function createGallery(pieces, shop, reducedMotion) {
     if (!drag.active) {
       if (Math.abs(y) > 12 && Math.abs(y) > Math.abs(x)) {
         drag = null;
+        schedule();
         return;
       }
       if (Math.abs(x) < 9) return;
@@ -178,6 +179,8 @@ export function createGallery(pieces, shop, reducedMotion) {
   viewport.addEventListener("pointerleave", () => {
     for (const property of ["--light-shift", "--lean-x", "--lean-y"]) viewport.style.removeProperty(property);
     if (drag && !drag.active) drag = null;
+    hovered = false;
+    schedule();
   });
   viewport.addEventListener("pointerup", event => release(event));
   viewport.addEventListener("pointercancel", event => release(event, true));
@@ -185,7 +188,7 @@ export function createGallery(pieces, shop, reducedMotion) {
     if (event.target === viewport && drag?.id === event.pointerId) release(event, true);
   });
   viewport.addEventListener("click", event => {
-    if (!blockedClick) return;
+    if (!blockedClick || event.detail === 0) return;
     event.preventDefault();
     event.stopPropagation();
     blockedClick = false;
@@ -200,7 +203,24 @@ export function createGallery(pieces, shop, reducedMotion) {
   gallery.querySelectorAll("[data-step]").forEach(button => {
     button.addEventListener("click", () => goTo(selected + Number(button.dataset.step)));
   });
-  gallery.querySelector("[data-showroom-zoom]").addEventListener("click", openPhoto);
+  viewport.addEventListener("pointerenter", event => {
+    if (event.pointerType !== "mouse") return;
+    hovered = true;
+    schedule();
+  });
+  gallery.addEventListener("focusin", schedule);
+  gallery.addEventListener("focusout", () => queueMicrotask(schedule));
+  document.addEventListener("visibilitychange", schedule);
+  reducedMotion.addEventListener("change", schedule);
+  rotation.addEventListener("click", () => {
+    paused = !paused;
+    schedule();
+  });
+  const observer = new IntersectionObserver(([entry]) => {
+    inView = entry.isIntersecting;
+    schedule();
+  }, { threshold: .25 });
+  observer.observe(viewport);
   document.querySelector("[data-hero-product]").addEventListener("click", () => goTo(0));
 
   const resize = new ResizeObserver(() => {

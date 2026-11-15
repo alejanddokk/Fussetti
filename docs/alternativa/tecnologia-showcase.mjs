@@ -4,7 +4,7 @@ import {initialOfficialStock} from './official-commerce.mjs';
 import {classifyOfficial} from './official-taxonomy.mjs';
 import {buyButton} from './product-views.mjs';
 import {combinationMoney} from './hogar-combo-views.mjs';
-import {bindHomeShowroom} from './hogar-showroom-motion.mjs';
+import {bindHomeShowroom} from './hogar-showroom-motion.mjs?v=deslizamiento1';
 import {bestPose} from './hogar-mas-vendidos.mjs';
 import {e,icon} from '../nueva/ui.mjs';
 
