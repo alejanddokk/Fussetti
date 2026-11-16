@@ -73,6 +73,7 @@ export function bindMotoFocus(root) {
  let index=-1;
  let position=Math.max(0,bikes.findIndex(node=>node.dataset.model===selectedMotoModel()));
  let width=stage.clientWidth;
+ let bikeWidth=bikes[0].offsetWidth;
  let drag=null;
  let settle=0;
  let ignoredClickUntil=0;
@@ -97,12 +98,15 @@ export function bindMotoFocus(root) {
   }
  }
 
+ function pitch(){return Math.max(width*(width<650?.62:.48),bikeWidth*.84)}
+
  function paint(next, animate=true) {
   position=next;
   const active=wrap(Math.round(position),count);
   sync(active,animate);
   bikes.forEach((bike,i)=>{
-   const pose=focusPose(focusOffset(i,position,count),width);
+   const offset=focusOffset(i,position,count);
+   const pose=focusPose(offset,width);
    const visible=String(pose.visible);
    if(bike.dataset.visible!==visible){
     bike.dataset.visible=visible;
@@ -112,7 +116,7 @@ export function bindMotoFocus(root) {
    }
    bike.dataset.center=String(i===active);
    if(!pose.visible)return;
-   bike.style.transform=`translate3d(calc(-50% + ${pose.x}px),${pose.y}px,0) scale(${pose.scale})`;
+   bike.style.transform=`translate3d(calc(-50% + ${offset*pitch()}px),${pose.y}px,0) scale(${pose.scale})`;
    bike.style.opacity=String(pose.opacity);
    bike.style.zIndex=String(pose.z);
   });
@@ -169,7 +173,7 @@ export function bindMotoFocus(root) {
    drag.moved=true;gallery.dataset.dragging='true';
    stage.setPointerCapture(event.pointerId);
   }
-  if(!reduced.matches)paint(drag.base-dx/focusPose(1,width).x,false);
+  if(!reduced.matches)paint(drag.base-dx/pitch(),false);
  });
  function finish(event,cancelled=false){
   if(!drag||event.pointerId!==drag.id)return;
@@ -178,14 +182,14 @@ export function bindMotoFocus(root) {
   if(!movement.moved){playback.hold();return}
   ignoredClickUntil=performance.now()+400;
   const dx=movement.x-event.clientX;
-  const choice=cancelled||Math.abs(dx)<26?Math.round(movement.base):Math.round(movement.base+Math.sign(dx)*.6+(reduced.matches?0:dx/focusPose(1,width).x));
+  const choice=cancelled||Math.abs(dx)<26?Math.round(movement.base):Math.round(movement.base+Math.sign(dx)*.6+(reduced.matches?0:dx/pitch()));
   goTo(choice);
  }
  listen(document,'pointerup',event=>finish(event));
  listen(document,'pointercancel',event=>finish(event,true));
  listen(stage,'lostpointercapture',event=>{if(event.target===stage)finish(event,true)});
  bikes.forEach(bike=>listen(bike,'click',event=>{if(event.detail&&performance.now()<ignoredClickUntil)event.preventDefault()}));
- const resize=new ResizeObserver(()=>{width=stage.clientWidth;paint(position,false)});
+ const resize=new ResizeObserver(()=>{width=stage.clientWidth;bikeWidth=bikes[0].offsetWidth;paint(position,false)});
  resize.observe(stage);
  paint(position,false);
  return ()=>{

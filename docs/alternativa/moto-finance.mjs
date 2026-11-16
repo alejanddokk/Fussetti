@@ -4,7 +4,7 @@ import {LENDERS} from './moto-lenders.mjs?v=credit-options1';
 import {e,icon} from '../nueva/ui.mjs';
 import {money,unitPrice} from './domain.mjs';
 import {showroomModels,motoName,motoPhoto} from './moto-showroom.mjs?v=vitrina1';
-import {focusFrames} from './moto-focus.mjs?v=vitrina1';
+import {focusFrames} from './moto-focus.mjs?v=fotos2';
 
 export function financeRoute(r){
  const page=r.path[0],q=r.q;

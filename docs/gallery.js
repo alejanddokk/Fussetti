@@ -34,7 +34,8 @@ export function createGallery(pieces, shop, reducedMotion) {
     product.href = shop + piece.route;
     product.draggable = false;
     product.setAttribute("aria-label", "Ver ficha de " + piece.title);
-    product.innerHTML = productShot(piece, "", index < 2 || index === pieces.length - 1 ? "eager" : "lazy");
+    product.innerHTML = productShot(piece, "", "eager");
+    product.querySelector("img").fetchPriority = index === 0 ? "high" : "low";
     return product;
   });
   track.replaceChildren(...surfaces);
@@ -51,7 +52,7 @@ export function createGallery(pieces, shop, reducedMotion) {
   thumbList.append(...thumbs);
 
   function stepSize() {
-    return width * (width < 620 ? .54 : .43);
+    return width * (width < 620 ? .65 : .56);
   }
 
   function offset(index, center) {
@@ -88,7 +89,7 @@ export function createGallery(pieces, shop, reducedMotion) {
     for (const [index, surface] of surfaces.entries()) {
       const delta = offset(index, position);
       const distance = Math.abs(delta);
-      const visible = distance < 1.6;
+      const visible = distance < 1.55;
       const marker = String(visible);
       if (surface.dataset.visible !== marker) {
         surface.dataset.visible = marker;
@@ -98,7 +99,7 @@ export function createGallery(pieces, shop, reducedMotion) {
       surface.style.setProperty("--offset", delta * stepSize() + "px");
       surface.style.setProperty("--rise", Math.min(distance, 2) * 25 + "px");
       surface.style.setProperty("--scale", Math.max(.42, 1 - distance * .29));
-      surface.style.setProperty("--opacity", Math.max(0, 1 - distance * .54));
+      surface.style.setProperty("--opacity", Math.min(1, Math.max(0, (1.55 - distance) / .65)) ** .82);
       surface.style.zIndex = String(40 - Math.floor(distance * 12));
     }
   }

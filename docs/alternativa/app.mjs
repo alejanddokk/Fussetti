@@ -25,7 +25,7 @@ import {guideTypes} from './decision-model.mjs';
 import {registerOfficial} from './official-commerce.mjs';
 import {officialCatalogueView,officialDetailView,officialRecord,officialHasType,bindOfficialGallery} from './official-catalog.mjs';
 import {cyberView} from './cyber-views.mjs';
-import {focusView,bindMotoFocus} from './moto-focus.mjs?v=vitrina1';
+import {focusView,bindMotoFocus} from './moto-focus.mjs?v=fotos2';
 import {workshopView,officialServicesView,bindMaintenanceTabs} from './service-pages.mjs';
 import {bindBranchGallery} from './branch-gallery.mjs';
 import {branchesView,branchDetailView} from './branch-views.mjs';

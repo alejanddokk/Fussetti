@@ -1,4 +1,4 @@
-import { createGallery, productShot } from "./gallery.js?v=vitrina1";
+import { createGallery, productShot } from "./gallery.js?v=fotos2";
 
 const shop = "./alternativa/";
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -18,7 +18,7 @@ const departments = [
   ["Tecnología", "#tecnologia", "tecno.jpg"],
   ["TV y audio", "#tv-audio", "audio.png"],
   ["Climatización", "#catalogo?cat=Climatizaci%C3%B3n", "rca.jpg"],
-  ["Jardín", "#catalogo?cat=Jard%C3%ADn", "https://www.fussetti.com/16350-large_default/fogonero-tromen-duomo-800.jpg"],
+  ["Jardín", "#catalogo?cat=Jard%C3%ADn", "fogonero-tromen.jpg"],
   ["Motos", "#motos-focus", "wave-110-transparent.webp"],
   ["Repuestos", "#catalogo?cat=Repuestos", "motul.webp"]
 ];
@@ -42,7 +42,9 @@ const preview = document.querySelector(".directory-preview");
 const previewPhoto = document.querySelector("#department-photo");
 const previewLabel = document.querySelector("#department-photo-label");
 let activeDepartment;
+let requestedDepartment;
 let previewAnimation;
+const preparedPhotos = new Map();
 const departmentLinks = departments.map(([title, route]) => {
   const link = document.createElement("a");
   link.className = "directory-link reveal";
@@ -51,20 +53,37 @@ const departmentLinks = departments.map(([title, route]) => {
   return link;
 });
 
-function showDepartment(index) {
-  if (activeDepartment === index) return;
-  activeDepartment = index;
+function prepareDepartmentPhoto(index) {
+  if (preparedPhotos.has(index)) return preparedPhotos.get(index);
   const [title, , image] = departments[index];
   const scene = { Motos: "wave", Repuestos: "motul", Jardín: "garden" }[title] || image.split(".")[0];
-  preview.dataset.department = scene;
-  previewLabel.textContent = title;
-  previewPhoto.innerHTML = productShot({ scene, image }, "", "eager");
+  const photo = document.createElement("div");
+  photo.innerHTML = productShot({ scene, image }, "", "eager");
+  const shot = photo.firstElementChild;
+  const imageNode = shot.querySelector("img");
+  const prepared = imageNode.decode()
+    .then(() => ({ title, scene, shot }))
+    .catch(() => { preparedPhotos.delete(index); return null; });
+  preparedPhotos.set(index, prepared);
+  return prepared;
+}
+
+async function showDepartment(index) {
+  requestedDepartment = index;
+  if (activeDepartment === index) return;
+  const photo = await prepareDepartmentPhoto(index);
+  if (!photo || requestedDepartment !== index) return;
+
+  activeDepartment = index;
+  previewAnimation?.cancel();
+  preview.dataset.department = photo.scene;
+  previewLabel.textContent = photo.title;
+  previewPhoto.replaceChildren(photo.shot);
   departmentLinks.forEach((link, i) => { link.dataset.preview = String(i === index); });
   if (!reduceMotion.matches) {
-    previewAnimation?.cancel();
     previewAnimation = previewPhoto.animate(
-      [{ opacity: .25, translate: "12px 0" }, { opacity: 1, translate: "0 0" }],
-      { duration: 460, easing: "cubic-bezier(.18,.68,.3,1)" }
+      [{ opacity: .72, translate: "5px 0" }, { opacity: 1, translate: "0 0" }],
+      { duration: 280, easing: "ease-out" }
     );
   }
 }
@@ -75,6 +94,12 @@ departmentLinks.forEach((link, index) => {
 });
 departmentList.append(...departmentLinks);
 showDepartment(0);
+const prewarmDirectory = new IntersectionObserver(([entry]) => {
+  if (!entry.isIntersecting) return;
+  prewarmDirectory.disconnect();
+  departments.forEach((_, index) => prepareDepartmentPhoto(index));
+}, { rootMargin: "220px" });
+prewarmDirectory.observe(preview);
 
 createGallery(pieces, shop, reduceMotion);
 

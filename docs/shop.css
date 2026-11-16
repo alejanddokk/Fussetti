@@ -309,3 +309,12 @@ body { background: var(--scene-paper); }
 }
 #app .moto-parts-bottom::before { width:100%; background:#e4cbbd; }
 #app .moto-parts-bottom::after { width:var(--parts-thumb,100%); left:var(--parts-offset,0%); background:#a60303; }
+/* A plain light field keeps the photograph free of lines and patterns. */
+#app .product-page .detail-image::before,
+#app .product-page .detail-image::after { display:none; }
+#app .product-page .detail-image {
+  background:radial-gradient(ellipse at 45% 38%,#fffdfa 6%,#ede1d4 94%);
+}
+@media(max-width:767px) {
+ #app .mf-moto-bike { width:min(73%,515px); }
+}

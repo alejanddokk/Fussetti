@@ -239,3 +239,10 @@ button,a { -webkit-tap-highlight-color:transparent; }
 .opening-copy h1 { letter-spacing:-.072em; word-spacing:.036em; }
 .section-heading h2,.road h2,.support h2 { letter-spacing:-.069em; word-spacing:.035em; }
 .road-product img { height:auto; }
+/* Keep the architectural outline out of the composited product surface. */
+.directory-preview::before {
+  inset:0;
+  border:0;
+  border-radius:0;
+  background:radial-gradient(ellipse at 50% 62%,#ffffff40,transparent 66%);
+}
