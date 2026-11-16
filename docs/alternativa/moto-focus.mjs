@@ -1,3 +1,4 @@
+import {bindRailPlayback} from "../rail-motion.mjs?v=vitrina1";
 import {selectedMotoModel,rememberMotoModel} from './moto-presentation.mjs';
 import {followMotoThumbnail} from './moto-thumbnails.mjs';
 import {motoJourneyView} from './moto-journey.mjs?v=credit-options1';
@@ -7,35 +8,34 @@ import {motoJourneyView} from './moto-journey.mjs?v=credit-options1';
 import {showroomModels,motoPhoto,motoName,motoDetails} from './moto-showroom.mjs?v=deslizamiento1';
 import {e,icon} from '../nueva/ui.mjs';
 
-export const FOCUS_DURATION=800,FOCUS_INTERVAL=7800,FOCUS_SIDE_SCALE=1/1.44001;
+export const FOCUS_SIDE_SCALE=1/1.44001;
 const wrap=(n,m)=>m?((n%m)+m)%m:0;
-// Separate alpha cutouts keep the source photos intact for the individual view.
-// Viewports normalize visible height and the wheel baseline, not raster opacity.
-export const focusFrames={
- 'honda-xr-300':{src:'https://fussetti-replica-20261102.germanvives15.chatgpt.site/alternativa/assets/motos/xr-300-transparent.png',size:[1994,789],box:[382,0,1182,784]},
- 'honda-wave-110-s':{src:'https://fussetti-replica-20261102.germanvives15.chatgpt.site/alternativa/assets/motos/wave-110-transparent.png',size:[1991,789],box:[384,4,1161,782]},
- 'honda-navi':{src:'https://fussetti-replica-20261102.germanvives15.chatgpt.site/alternativa/assets/motos/navi-transparent.png',size:[1991,789],box:[414,-4,1163,789]},
- 'honda-cb-125f':{src:'https://fussetti-replica-20261102.germanvives15.chatgpt.site/alternativa/assets/motos/cb-125f-transparent.png',size:[1991,790],box:[380,17,1224,768]},
- 'honda-cb300':{src:'https://fussetti-replica-20261102.germanvives15.chatgpt.site/alternativa/assets/motos/cb300-transparent.png',size:[1673,940],box:[44,6,1547,956]},
- 'honda-xr190':{src:'https://fussetti-replica-20261102.germanvives15.chatgpt.site/alternativa/assets/motos/xr-190-transparent.png',size:[1536,1024],box:[15,12,1515,1000]},
- 'honda-xr150l':{src:'https://fussetti-replica-20261102.germanvives15.chatgpt.site/alternativa/assets/motos/xr-150l-transparent.png',size:[1586,992],box:[56,17,1464,953]}
-};
+// Local crops of the original Fussetti dealer photos.
+export const focusFrames=Object.fromEntries([
+ ['honda-xr-300','honda-xr300.webp'],
+ ['honda-wave-110-s','honda-wave.webp'],
+ ['honda-navi','honda-navi.webp'],
+ ['honda-cb-125f','honda-cb125f.webp'],
+ ['honda-cb300','honda-cb300.webp'],
+ ['honda-xr190','honda-xr190.webp'],
+ ['honda-xr150l','honda-xr150l.webp']
+].map(([id,file])=>[id,new URL('../assets/'+file,import.meta.url).href]));
+const fussettiLogo=new URL('../assets/wordmark.png',import.meta.url).href;
+const hondaLogo=new URL('../assets/honda-brand.svg',import.meta.url).href;
 function bikeImage(p){
- const f=focusFrames[p.id],src=e(f?.src||motoPhoto(p));
- if(!f)return `<img class="mf-bike-image" src="${src}" alt="" draggable="false">`;
- return `<svg class="mf-bike-image" viewBox="${f.box.join(' ')}" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false"><image href="${src}" x="0" y="0" width="${f.size[0]}" height="${f.size[1]}"/></svg>`;
+ return `<img class="mf-bike-image" src="${e(focusFrames[p.id]||motoPhoto(p))}" alt="" decoding="async" draggable="false">`;
 }
 export function focusView(s){
  const models=showroomModels(s);
  if(!models.length)return '<section class="container page empty"><h1>Todavía no hay motos en este escenario.</h1><a class="button" href="#consulta?motos=1">Preparar consulta demo</a></section>';
  return `<div class="moto-showroom moto-focus-showroom"><section class="mf-motos" data-moto-focus aria-roledescription="carrusel" aria-label="Modelos Honda en fila">
- <div class="container mf-moto-branding"><a href="../" aria-label="Volver a Fussetti"><img src="https://fussetti-replica-20261102.germanvives15.chatgpt.site/motos/assets/1e1516fa4fa9500a.png" alt="Fussetti"></a><span class="mf-honda"><img src="https://fussetti-replica-20261102.germanvives15.chatgpt.site/alternativa/assets/motos/honda-logo.svg" alt="Honda"></span></div>
- <div class="container mf-moto-intro"><h1>Tu próxima moto, en primer plano.</h1><button type="button" class="moto-rotation" data-moto-rotation>Pausar</button></div>
- <div class="mf-moto-stage" tabindex="0" aria-label="Motos en fila. Usá las flechas para elegir, Inicio o Fin para ir a los extremos y Escape para detener el avance automático.">
+ <div class="container mf-moto-branding"><a href="../" aria-label="Volver a Fussetti"><img src="${fussettiLogo}" alt="Fussetti"></a><span class="mf-honda"><img src="${hondaLogo}" alt="Honda"></span></div>
+ <div class="container mf-moto-intro"><h1>Elegí tu próxima Honda.</h1><button type="button" class="moto-rotation" data-moto-rotation>Pausar</button></div>
+ <div class="mf-moto-stage" tabindex="0" aria-label="Arrastrá o usá las flechas para recorrer las motos. Cada foto abre su ficha.">
  ${models.map((p,i)=>`<a class="mf-moto-bike" href="#producto/${encodeURIComponent(p.id)}" draggable="false" data-focus-bike="${i}" data-model="${e(p.id)}" aria-label="Ver ficha de ${e(p.name)}" ${i>1&&i!==models.length-1?'tabindex="-1"':''} style="${i===0?'':'visibility:hidden;'}"><span class="mf-bike-shadow" aria-hidden="true"></span>${bikeImage(p)}<span class="mf-bike-caption" aria-hidden="true">${e(motoName(p))} ${icon('arrow',12)}</span></a>`).join('')}
- <span class="mf-moto-count moto-sr" aria-live="polite" aria-atomic="true"><b data-focus-count>01</b><span>/ ${String(models.length).padStart(2,'0')}</span><span data-focus-label>${e(motoName(models[0]))}</span></span><div class="mf-moto-arrows"><button type="button" data-focus-prev aria-label="Moto anterior">${icon('arrow',20)}</button><button type="button" data-focus-next aria-label="Moto siguiente">${icon('arrow',20)}</button></div></div>
+ <span class="mf-moto-count" aria-live="polite" aria-atomic="true"><b data-focus-count>01</b><span>/ ${String(models.length).padStart(2,'0')}</span><span data-focus-label>${e(motoName(models[0]))}</span></span><div class="mf-moto-arrows"><button type="button" data-focus-prev aria-label="Moto anterior">${icon('arrow',20)}</button><button type="button" data-focus-next aria-label="Moto siguiente">${icon('arrow',20)}</button></div></div>
  <div class="container mf-moto-details">${models.map((p,i)=>`<article class="mf-moto-summary" data-focus-summary="${i}" data-model="${e(p.id)}" ${i?'hidden inert aria-hidden="true"':''}>${motoDetails(s,p)}</article>`).join('')}</div>
- <div class="container mf-moto-selector" aria-label="Elegir modelo de moto">${models.map((p,i)=>`<button type="button" data-focus-select="${i}" aria-label="Seleccionar ${e(p.name)}" ${i===0?'aria-current="true"':''}><small aria-hidden="true">${String(i+1).padStart(2,'0')}</small><img src="${e(focusFrames[p.id]?.src||motoPhoto(p))}" alt="" loading="lazy"><span>${e(motoName(p))}</span></button>`).join('')}</div>
+ <div class="container mf-moto-selector" aria-label="Elegir modelo de moto">${models.map((p,i)=>`<button type="button" data-focus-select="${i}" aria-label="Seleccionar ${e(p.name)}" ${i===0?'aria-current="true"':''}><small aria-hidden="true">${String(i+1).padStart(2,'0')}</small><img src="${e(focusFrames[p.id]||motoPhoto(p))}" alt="" loading="lazy"><span>${e(motoName(p))}</span></button>`).join('')}</div>
  </section>${motoJourneyView(s)}</div>`;
 }
 
@@ -57,99 +57,139 @@ export function focusPose(offset,width){
  const d=Math.abs(offset),progress=Math.min(1,d),pitch=Math.min(480,Math.max(120,width*.31));
  return {x:offset*pitch,y:-8*progress,scale:1-(1-FOCUS_SIDE_SCALE)*progress,opacity:Math.max(0,1-.44*progress)*Math.max(0,Math.min(1,(1.85-d)/.65)),visible:d<1.85,z:Math.round((4-Math.min(3,d))*100)};
 }
-export function bindMotoFocus(root){
- const gallery=root.querySelector('[data-moto-focus]');if(!gallery)return ()=>{};
- const stage=gallery.querySelector('.mf-moto-stage'),bikes=[...gallery.querySelectorAll('[data-focus-bike]')],panels=[...gallery.querySelectorAll('[data-focus-summary]')],selectors=[...gallery.querySelectorAll('[data-focus-select]')];
+export function bindMotoFocus(root) {
+ const gallery=root.querySelector('[data-moto-focus]');
+ if(!gallery)return ()=>{};
+ const stage=gallery.querySelector('.mf-moto-stage');
  const rotation=gallery.querySelector('[data-moto-rotation]');
- const count=bikes.length;if(!count)return ()=>{};
- const media=matchMedia('(prefers-reduced-motion: reduce)'),cleanups=[];
- let index=Math.max(0,bikes.findIndex(n=>n.dataset.model===selectedMotoModel())),pos=index,target=index,frame=0,timer=0,start=0,from=pos,drag=null,paused=false,hover=false,focused=false,visible=true,disposed=false,suppressUntil=0,infoAnimation=null,duration=FOCUS_DURATION;
- const listen=(node,type,fn,opts)=>{node.addEventListener(type,fn,opts);cleanups.push(()=>node.removeEventListener(type,fn,opts))};
- const stop=()=>{clearTimeout(timer);timer=0};
- function paint(){
+ const announcement=gallery.querySelector('.mf-moto-count');
+ const bikes=[...gallery.querySelectorAll('[data-focus-bike]')];
+ const panels=[...gallery.querySelectorAll('[data-focus-summary]')];
+ const selectors=[...gallery.querySelectorAll('[data-focus-select]')];
+ const count=bikes.length;
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+ const bindings=new AbortController();
+ const listen=(node,event,fn)=>node.addEventListener(event,fn,{signal:bindings.signal});
+ let index=-1;
+ let position=Math.max(0,bikes.findIndex(node=>node.dataset.model===selectedMotoModel()));
+ let width=stage.clientWidth;
+ let drag=null;
+ let settle=0;
+ let ignoredClickUntil=0;
+ let detailsAnimation;
+
+ function sync(next, animate) {
+  if(next===index)return;
+  index=next;
+  rememberMotoModel(bikes[index].dataset.model);
+  gallery.dataset.activeIndex=String(index);
+  panels.forEach((panel,i)=>{panel.hidden=i!==index;panel.inert=i!==index;panel.setAttribute('aria-hidden',String(i!==index))});
+  selectors.forEach((button,i)=>{if(i===index)button.setAttribute('aria-current','true');else button.removeAttribute('aria-current')});
+  followMotoThumbnail(selectors[index],reduced.matches);
+  gallery.querySelector('[data-focus-count]').textContent=String(index+1).padStart(2,'0');
+  gallery.querySelector('[data-focus-label]').textContent=panels[index].querySelector('h2').textContent;
+  detailsAnimation?.cancel();
+  if(animate&&!reduced.matches){
+   detailsAnimation=panels[index].animate(
+    [{opacity:.56,translate:'0 8px'},{opacity:1,translate:'0 0'}],
+    {duration:390,easing:'ease-out'}
+   );
+  }
+ }
+
+ function paint(next, animate=true) {
+  position=next;
+  const active=wrap(Math.round(position),count);
+  sync(active,animate);
   bikes.forEach((bike,i)=>{
-   const p=focusPose(focusOffset(i,pos,count),stage.clientWidth);
-   if(!p.visible&&bike.contains(document.activeElement))stage.focus({preventScroll:true});
-   bike.style.transform=`translate3d(calc(-50% + ${p.x}px),${p.y}px,0) scale(${p.scale})`;
-   bike.style.opacity=String(p.opacity);bike.style.zIndex=String(p.z);bike.style.visibility=p.visible?'visible':'hidden';
-   bike.tabIndex=p.visible?0:-1;bike.setAttribute('aria-hidden',String(!p.visible));bike.dataset.center=String(i===index);
+   const pose=focusPose(focusOffset(i,position,count),width);
+   const visible=String(pose.visible);
+   if(bike.dataset.visible!==visible){
+    bike.dataset.visible=visible;
+    bike.style.visibility=pose.visible?'visible':'hidden';
+    bike.tabIndex=pose.visible?0:-1;
+    bike.setAttribute('aria-hidden',String(!pose.visible));
+   }
+   bike.dataset.center=String(i===active);
+   if(!pose.visible)return;
+   bike.style.transform=`translate3d(calc(-50% + ${pose.x}px),${pose.y}px,0) scale(${pose.scale})`;
+   bike.style.opacity=String(pose.opacity);
+   bike.style.zIndex=String(pose.z);
   });
  }
- function sync(){
-  rememberMotoModel(bikes[index].dataset.model);gallery.dataset.activeIndex=String(index);
-  bikes.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===index)));
-  panels.forEach((p,i)=>{p.hidden=i!==index;p.inert=i!==index;p.setAttribute('aria-hidden',String(i!==index))});
-  selectors.forEach((b,i)=>{if(i===index)b.setAttribute('aria-current','true');else b.removeAttribute('aria-current')});
-  followMotoThumbnail(selectors[index],media.matches);
-  const label=panels[index].querySelector('h2').textContent;
-  gallery.querySelector('[data-focus-count]').textContent=String(index+1).padStart(2,'0');
-  gallery.querySelector('[data-focus-label]').textContent=label;
- }
- function schedule(){
-  stop();const running=!disposed&&!paused&&!media.matches&&!hover&&!focused&&visible&&!document.hidden&&!document.querySelector('dialog[open]')&&!drag&&count>1;
-  rotation.hidden=media.matches||count<2;rotation.textContent=paused?'Reanudar':'Pausar';
-  gallery.dataset.autoplay=String(running);gallery.querySelector('.mf-moto-count').setAttribute('aria-live',running?'off':'polite');
-  if(running)timer=setTimeout(()=>go(Math.round(target)+1,false),FOCUS_INTERVAL);
- }
- function tick(now){
-  frame=0;if(disposed)return;if(!start)start=now;
-  const t=Math.min(1,(now-start)/duration);pos=from+(target-from)*(duration===FOCUS_DURATION?focusEase(t):t*t*(3-2*t));paint();
-  if(t<1)frame=requestAnimationFrame(tick);else{pos=target;paint();start=0;schedule()}
- }
- function go(next,user=true){
-  if(disposed)return;duration=user?FOCUS_DURATION:2400;stop();cancelAnimationFrame(frame);frame=0;start=0;from=pos;index=wrap(Math.round(next),count);target=Math.round(pos+focusOffset(index,pos,count));
-  infoAnimation?.cancel();sync();
-  if(media.matches||Math.abs(target-pos)<.001){pos=target;paint();schedule()}
-  else{frame=requestAnimationFrame(tick);infoAnimation=panels[index].animate?.([{opacity:0,transform:'translateY(9px)'},{opacity:1,transform:'translateY(0)'}],{duration:400,easing:'cubic-bezier(.33,0,0,1)'})}
- }
- function choose(n){
-  const current=wrap(Math.round(target),count);let delta=wrap(n-current,count);if(delta>count/2)delta-=count;go(Math.round(target)+delta);
- }
- listen(gallery.querySelector('[data-focus-prev]'),'click',()=>go(Math.round(target)-1));
- listen(gallery.querySelector('[data-focus-next]'),'click',()=>go(Math.round(target)+1));
- bikes.forEach(b=>listen(b,'click',ev=>{if(ev.detail&&performance.now()<suppressUntil)ev.preventDefault()}));
- listen(rotation,'click',()=>{paused=!paused;schedule()});
- selectors.forEach((b,i)=>listen(b,'click',()=>choose(i)));
- listen(stage,'keydown',ev=>{
-  if(['ArrowLeft','ArrowRight','Home','End','Escape'].includes(ev.key)){
-   ev.preventDefault();if(ev.key==='Escape'){paused=true;schedule();return}
-   if(ev.key==='Home')choose(0);else if(ev.key==='End')choose(count-1);else go(Math.round(target)+(ev.key==='ArrowRight'?1:-1));
+
+ const playback=bindRailPlayback({
+  viewport:stage,scope:gallery,toggle:rotation,
+  blocked:()=>Boolean(drag||settle||count<2),
+  advance:delta=>paint(position+delta/7600),
+  onReduced:()=>{cancelAnimationFrame(settle);settle=0;detailsAnimation?.cancel();paint(Math.round(position),false)},
+  onMode:playing=>announcement.setAttribute('aria-live',playing?'off':'polite')
+ });
+
+ function goTo(next, keyboard=false){
+  cancelAnimationFrame(settle);settle=0;
+  const from=position,to=Math.round(from+focusOffset(wrap(next,count),from,count));
+  playback.hold();
+  if(reduced.matches||Math.abs(to-from)<.001){
+   paint(to,false);if(keyboard)stage.focus({preventScroll:true});return;
   }
+  if(keyboard)stage.focus({preventScroll:true});
+  const started=performance.now();
+  function tick(now){
+   const t=Math.min(1,(now-started)/560);
+   paint(from+(to-from)*focusEase(t));
+   settle=t<1?requestAnimationFrame(tick):0;
+   if(!settle)playback.refresh();
+  }
+  settle=requestAnimationFrame(tick);
+ }
+
+ const prev=gallery.querySelector('[data-focus-prev]'),next=gallery.querySelector('[data-focus-next]');
+ prev.disabled=next.disabled=count<2;
+ listen(prev,'click',()=>goTo(index-1));
+ listen(next,'click',()=>goTo(index+1));
+ selectors.forEach((button,i)=>listen(button,'click',()=>goTo(i)));
+ listen(stage,'keydown',event=>{
+  if(event.ctrlKey||event.altKey||event.metaKey||!['Home','End','ArrowLeft','ArrowRight'].includes(event.key))return;
+  event.preventDefault();
+  goTo(event.key==='Home'?0:event.key==='End'?count-1:index+(event.key==='ArrowRight'?1:-1),true);
  });
- listen(stage,'pointerenter',ev=>{if(ev.pointerType==='mouse'){hover=true;schedule()}});listen(stage,'pointerleave',()=>{hover=false;schedule()});
- listen(gallery,'focusin',()=>{focused=document.activeElement!==rotation;schedule()});listen(gallery,'focusout',ev=>{focused=gallery.contains(ev.relatedTarget)&&ev.relatedTarget!==rotation;schedule()});
- listen(stage,'pointerdown',ev=>{
-  if(drag||ev.button!==0||ev.isPrimary===false||count<2)return;
-  drag={id:ev.pointerId,x:ev.clientX,y:ev.clientY,lastX:ev.clientX,lastT:performance.now(),base:pos,velocity:0,moved:false};stop();
+ listen(stage,'pointerdown',event=>{
+  if(drag||event.button!==0||event.isPrimary===false||count<2||event.target.closest('.mf-moto-arrows'))return;
+  cancelAnimationFrame(settle);settle=0;ignoredClickUntil=0;
+  drag={id:event.pointerId,x:event.clientX,y:event.clientY,base:position,moved:false};
+  playback.refresh();
  });
- listen(stage,'pointermove',ev=>{
-  if(!drag||drag.id!==ev.pointerId)return;
-  const dx=ev.clientX-drag.x,dy=ev.clientY-drag.y;
+ listen(stage,'pointermove',event=>{
+  if(!drag||event.pointerId!==drag.id)return;
+  const dx=event.clientX-drag.x,dy=event.clientY-drag.y;
   if(!drag.moved){
-   if(Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>12){drag=null;schedule();return}
-   if(Math.abs(dx)<12)return;
-   cancelAnimationFrame(frame);frame=0;drag.base=pos;drag.moved=true;gallery.dataset.dragging='true';
-   try{stage.setPointerCapture(ev.pointerId)}catch{}
+   if(Math.abs(dy)>12&&Math.abs(dy)>Math.abs(dx)){drag=null;playback.hold();return}
+   if(Math.abs(dx)<10)return;
+   drag.moved=true;gallery.dataset.dragging='true';
+   stage.setPointerCapture(event.pointerId);
   }
-  const now=performance.now(),pitch=Math.min(480,Math.max(120,stage.clientWidth*.31));
-  drag.velocity=-(ev.clientX-drag.lastX)/Math.max(1,now-drag.lastT)*1000/pitch;drag.lastX=ev.clientX;drag.lastT=now;
-  if(!media.matches){pos=drag.base-dx/pitch;paint()}
-  ev.preventDefault();
+  if(!reduced.matches)paint(drag.base-dx/focusPose(1,width).x,false);
  });
- const finish=(ev,cancelled=false)=>{
-  if(!drag||drag.id!==ev.pointerId)return;
-  const d=drag;drag=null;delete gallery.dataset.dragging;
-  if(d.moved){suppressUntil=performance.now()+450;const drift=Math.max(-.6,Math.min(.6,d.velocity*.12));const wanted=cancelled?Math.round(target):media.matches?Math.round(target)+(ev.clientX<d.x?1:-1):Math.round(pos+drift);go(wanted)}
-  else schedule();
-  try{if(stage.hasPointerCapture(ev.pointerId))stage.releasePointerCapture(ev.pointerId)}catch{}
+ function finish(event,cancelled=false){
+  if(!drag||event.pointerId!==drag.id)return;
+  const movement=drag;drag=null;delete gallery.dataset.dragging;
+  if(stage.hasPointerCapture(event.pointerId))stage.releasePointerCapture(event.pointerId);
+  if(!movement.moved){playback.hold();return}
+  ignoredClickUntil=performance.now()+400;
+  const dx=movement.x-event.clientX;
+  const choice=cancelled||Math.abs(dx)<26?Math.round(movement.base):Math.round(movement.base+Math.sign(dx)*.6+(reduced.matches?0:dx/focusPose(1,width).x));
+  goTo(choice);
+ }
+ listen(document,'pointerup',event=>finish(event));
+ listen(document,'pointercancel',event=>finish(event,true));
+ listen(stage,'lostpointercapture',event=>{if(event.target===stage)finish(event,true)});
+ bikes.forEach(bike=>listen(bike,'click',event=>{if(event.detail&&performance.now()<ignoredClickUntil)event.preventDefault()}));
+ const resize=new ResizeObserver(()=>{width=stage.clientWidth;paint(position,false)});
+ resize.observe(stage);
+ paint(position,false);
+ return ()=>{
+  bindings.abort();playback.destroy();resize.disconnect();
+  cancelAnimationFrame(settle);detailsAnimation?.cancel();
  };
- // Document listeners also release a short press that leaves the stage before
- // pointer capture starts, without swallowing normal clicks on a side model.
- listen(document,'pointerup',ev=>finish(ev));listen(document,'pointercancel',ev=>finish(ev,true));listen(stage,'lostpointercapture',ev=>{if(ev.target===stage)finish(ev,true)});
- listen(document,'visibilitychange',schedule);listen(document,'close',schedule,true);
- listen(media,'change',()=>{const id=drag?.id;drag=null;delete gallery.dataset.dragging;cancelAnimationFrame(frame);frame=0;infoAnimation?.cancel();pos=target;paint();try{if(id!==undefined&&stage.hasPointerCapture(id))stage.releasePointerCapture(id)}catch{}schedule()});
- const resize=new ResizeObserver(()=>paint());resize.observe(stage);cleanups.push(()=>resize.disconnect());
- const intersection=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;schedule()},{threshold:.2});intersection.observe(gallery);cleanups.push(()=>intersection.disconnect());
- gallery.querySelectorAll('[data-focus-prev],[data-focus-next]').forEach(b=>b.disabled=count<2);sync();paint();schedule();
- return ()=>{disposed=true;stop();cancelAnimationFrame(frame);infoAnimation?.cancel();const id=drag?.id;drag=null;try{if(id!==undefined&&stage.hasPointerCapture(id))stage.releasePointerCapture(id)}catch{}cleanups.forEach(fn=>fn())};
 }

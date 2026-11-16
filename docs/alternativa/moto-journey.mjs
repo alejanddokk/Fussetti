@@ -2,7 +2,7 @@ import {e,icon} from '../nueva/ui.mjs';
 import {money,unitPrice} from './domain.mjs';
 import {branchInfo} from './branch-model.mjs';
 import {lendersView} from './moto-lenders.mjs?v=credit-options1';
-import {partsCarouselView,bindPartsCarousel} from './moto-parts.mjs?v=deslizamiento1';
+import {partsCarouselView,bindPartsCarousel} from './moto-parts.mjs?v=vitrina1';
 import {motoModels,partsModelOptions,journeySelection,journeyLinks} from './moto-journey-model.mjs';
 
 const STORAGE='fussetti-alternativa-moto-journey-v1';

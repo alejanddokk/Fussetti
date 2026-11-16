@@ -1,4 +1,4 @@
-import {revealRoute} from "./scene.mjs?v=deslizamiento1";
+import {revealRoute} from "./scene.mjs?v=vitrina1";
 import {bindMobilePanels} from './mobile-panels.mjs';
 let disposeMobilePanels=()=>{};
 let partsScrollResults=false;
@@ -6,7 +6,6 @@ import {setPartsBike,partsBike,bikeLabel,partsQuery} from './repuestos-experienc
 import {applyInterfaceScale} from './interface-scale.mjs';
 import {bindTvShowcase} from './tv-audio-showcase.mjs';
 import {bindTechShowcase} from './tecnologia-showcase.mjs';
-import {MOTO_PHONE_QUERY,watchMotoPresentation} from './moto-presentation.mjs';
 import {bindHomeCategories} from './hogar-categorias.mjs';
 import {bindMotoJourney} from './moto-journey.mjs?v=credit-options1';
 import {bindGardenShowroom} from './garden-showroom.mjs';
@@ -17,24 +16,23 @@ import {bindLenders} from './moto-lenders.mjs?v=credit-options1';
 import {sectorComboOptions} from './sector-combo-views.mjs';
 import {addCombination} from './hogar-combinations.mjs';
 import {bindCombinations} from './hogar-combo-motion.mjs';
-import {bindHomeShowroom} from './hogar-showroom-motion.mjs?v=deslizamiento1';
+import {bindHomeShowroom} from './hogar-showroom-motion.mjs?v=vitrina1';
 import {sectorView} from './sector-views.mjs?v=20261104-tech1';
 import {sectorForCategory} from './sector-model.mjs';
-import {createMotoFinance} from './moto-finance.mjs?v=deslizamiento1';
+import {createMotoFinance} from './moto-finance.mjs?v=vitrina1';
 import {hogarView,bindHogar} from './hogar-views.mjs?v=20261106-iconos1';
 import {guideTypes} from './decision-model.mjs';
 import {registerOfficial} from './official-commerce.mjs';
 import {officialCatalogueView,officialDetailView,officialRecord,officialHasType,bindOfficialGallery} from './official-catalog.mjs';
 import {cyberView} from './cyber-views.mjs';
-import {focusView,bindMotoFocus} from './moto-focus.mjs?v=deslizamiento1';
+import {focusView,bindMotoFocus} from './moto-focus.mjs?v=vitrina1';
 import {workshopView,officialServicesView,bindMaintenanceTabs} from './service-pages.mjs';
 import {bindBranchGallery} from './branch-gallery.mjs';
 import {branchesView,branchDetailView} from './branch-views.mjs';
 import {branchInfo,branchQuery,branchesHref,selectBranch} from './branch-model.mjs';
 import {campaignHeader,bindCampaign} from './campaign-carousel.mjs';
-import {bindPartsCarousel} from './moto-parts.mjs?v=deslizamiento1';
-import {showroomView,motoHeader,motoFooter,isMotoExperience} from './moto-showroom.mjs?v=deslizamiento1';
-import {bindMotoCarousel} from './moto-carousel.mjs?v=deslizamiento1';
+import {bindPartsCarousel} from './moto-parts.mjs?v=vitrina1';
+import {motoHeader,motoFooter,isMotoExperience} from './moto-showroom.mjs?v=vitrina1';
 import {cartView,checkoutView,purchaseOrderView} from './checkout-views.mjs?v=20261106-mobile3';
 import {checkoutDraft,changeCheckout,changeQuantity} from './checkout-model.mjs';
 import {navigationView,bindNavigation} from './navigation-views.mjs?v=20261105-nav-movil2';
@@ -50,8 +48,7 @@ import {types,money,unitPrice,product,profile,event,toggleCompare,recommendation
 import {e,icon} from '../nueva/ui.mjs';
 const app=document.querySelector('#app');
 const motoFinance=createMotoFinance(s);
-const motoPhone=matchMedia(MOTO_PHONE_QUERY);
-const responsiveMotos=()=>motoPhone.matches?showroomView(s):focusView(s);
+const motoShowroom=()=>focusView(s);
 const campaignState={index:0,paused:false};let campaignController=null;
 let differences=false,careDraft={},checkoutError='',cartError='',cartErrorId='',checkoutBusy=false;
 const categories=['Electrodomésticos','Hogar','Tecnología','Climatización','TV y audio','Jardín','Motos','Repuestos'];
@@ -66,7 +63,7 @@ const title=(eyebrow,heading,text='')=>`<div class="page-title"><p class="eyebro
 function card(p,why=''){return productCard(s,p,why)}
 const grid=items=>`<div class="product-grid">${items.map(p=>card(p)).join('')}</div>`;
 function home(){return homeView(s)}
-function catalog(q){if(q.get('q')&&!q.get('cat')&&!q.get('tipo')&&!q.has('ofertas')&&!q.get('coleccion')&&!q.get('seleccion'))return searchResultsView(s,q);const sector=sectorForCategory(q.get('cat'));if(sector&&!['q','tipo','orden','pagina','lista','seleccion','coleccion','ofertas','sub'].some(k=>q.has(k)))return sectorView(s,sector.key);if(q.get('cat')==='Hogar'&&!['q','tipo','orden','pagina','lista','coleccion','ofertas','sub'].some(k=>q.has(k)))return hogarView(s);if(!q.has('ofertas')&&(officialHasType(q.get('tipo'))||!q.get('tipo')&&(!q.get('cat')||['Hogar','Tecnología','Electrodomésticos','TV y audio','TV y Audio','Jardín','Climatización'].includes(q.get('cat')))))return officialCatalogueView(s,q);return (q.get('cat')==='Motos'||q.get('tipo')==='motorcycle')&&!q.get('q')&&!q.has('ofertas')&&!q.get('orden')?responsiveMotos():catalogueView(s,q)}
+function catalog(q){if(q.get('q')&&!q.get('cat')&&!q.get('tipo')&&!q.has('ofertas')&&!q.get('coleccion')&&!q.get('seleccion'))return searchResultsView(s,q);const sector=sectorForCategory(q.get('cat'));if(sector&&!['q','tipo','orden','pagina','lista','seleccion','coleccion','ofertas','sub'].some(k=>q.has(k)))return sectorView(s,sector.key);if(q.get('cat')==='Hogar'&&!['q','tipo','orden','pagina','lista','coleccion','ofertas','sub'].some(k=>q.has(k)))return hogarView(s);if(!q.has('ofertas')&&(officialHasType(q.get('tipo'))||!q.get('tipo')&&(!q.get('cat')||['Hogar','Tecnología','Electrodomésticos','TV y audio','TV y Audio','Jardín','Climatización'].includes(q.get('cat')))))return officialCatalogueView(s,q);return (q.get('cat')==='Motos'||q.get('tipo')==='motorcycle')&&!q.get('q')&&!q.has('ofertas')&&!q.get('orden')?motoShowroom():catalogueView(s,q)}
 function empty(h,p=''){return `<div class="empty"><h2>${h}</h2><p>${p}</p>${link('Volver al catálogo','#catalogo','button outline')}${link('Preparar consulta','#consulta','text-link')}</div>`}
 function guide(){return searchJourneyNotice(s.guide.searchContext)+guideView(s)}
 function why(p){return fitReason(s,p)}
@@ -90,7 +87,7 @@ function branchPage(id){return branchDetailView(s,id,route().q)}
 function workshopPage(){return workshopView(s,route().q)}
 function servicesPage(){return officialServicesView(s,route().q)}
 function financingPage(){return `<section class="container page">${title('UNA ELECCIÓN QUE TE CIERRE','Financiación, con claridad.','En este prototipo podés recorrer una solicitud de financiación de moto usando un perfil ficticio.')}<div class="panel"><h2>Empezá por la moto que querés.</h2><p>Podés comparar precios demo y elegir una sucursal. No pedimos DNI, ingresos ni datos crediticios, y no se evalúa ni se envía una solicitud real.</p>${link('Explorar motos','#catalogo?cat=Motos')}${link('Necesito orientación','#guia','text-link')}</div></section>`}
-function currentPage(){const {path:[page,id],q}=route();switch(page){case 'inicio':return home();case 'hogar':return hogarView(s);case 'electrodomesticos':case 'tecnologia':case 'tv-audio':return sectorView(s,page);case 'cyber':return cyberView(s);case 'motos':case 'motos-focus':return responsiveMotos();case 'catalogo':return catalog(q);case 'buscar':return searchResultsView(s,q);case 'guia':return guide();case 'resultados':return resultPage();case 'comparar':return comparePage();case 'producto':return detailPage(id);case 'producto-oficial':return officialDetailView(s,id);case 'carrito':return cartPage();case 'checkout':return checkoutPage();case 'reserva':return reservePage(id);case 'pedido':return orderPage(id);case 'pedidos':return ordersPage();case 'cuenta':case 'mimoto':return accountPage();case 'mis-productos':return myProductsView(s,q);case 'mi-producto':return ownedProductView(s,id,q);case 'agregar-producto':return registerView(s,q,careDraft);case 'mis-comprobantes':return receiptsView(s);case 'comprobante':return receiptView(s,id);case 'favoritos':return favoritesPage();case 'consulta':return consultPage(q);case 'consultas':return consultationsPage();case 'sucursales':return branchesPage();case 'sucursal':return branchPage(id);case 'taller':return workshopPage();case 'services':return servicesPage();case 'financiacion':return financingPage();default:return empty('No encontramos esta página.')}}
+function currentPage(){const {path:[page,id],q}=route();switch(page){case 'inicio':return home();case 'hogar':return hogarView(s);case 'electrodomesticos':case 'tecnologia':case 'tv-audio':return sectorView(s,page);case 'cyber':return cyberView(s);case 'motos':case 'motos-focus':return motoShowroom();case 'catalogo':return catalog(q);case 'buscar':return searchResultsView(s,q);case 'guia':return guide();case 'resultados':return resultPage();case 'comparar':return comparePage();case 'producto':return detailPage(id);case 'producto-oficial':return officialDetailView(s,id);case 'carrito':return cartPage();case 'checkout':return checkoutPage();case 'reserva':return reservePage(id);case 'pedido':return orderPage(id);case 'pedidos':return ordersPage();case 'cuenta':case 'mimoto':return accountPage();case 'mis-productos':return myProductsView(s,q);case 'mi-producto':return ownedProductView(s,id,q);case 'agregar-producto':return registerView(s,q,careDraft);case 'mis-comprobantes':return receiptsView(s);case 'comprobante':return receiptView(s,id);case 'favoritos':return favoritesPage();case 'consulta':return consultPage(q);case 'consultas':return consultationsPage();case 'sucursales':return branchesPage();case 'sucursal':return branchPage(id);case 'taller':return workshopPage();case 'services':return servicesPage();case 'financiacion':return financingPage();default:return empty('No encontramos esta página.')}}
 function safe(fn){return async ev=>{try{await fn(ev);save()}catch(error){toast(error.message)}}}
 function focusGuide(){const h=app.querySelector('#guide-form h2');h?.setAttribute('tabindex','-1');h?.focus({preventScroll:true});h?.scrollIntoView({block:'nearest'})}
 function guideSave(form){
@@ -169,7 +166,7 @@ let disposeCombinations=()=>{};
 let disposeTech=()=>{},disposeHomeShowroom=()=>{},disposeGardenShowroom=()=>{},disposeHomeCategories=()=>{},disposeHogar=()=>{};
 let disposeLenders=()=>{};
 let disposeFocus=()=>{};
-let disposeJourney=()=>{},disposeMoto=()=>{},disposeParts=()=>{},disposeNavigation=()=>{};
+let disposeJourney=()=>{},disposeParts=()=>{},disposeNavigation=()=>{};
 function updateQuantity(id,qty,delta=0){try{changeQuantity(s,id,qty);cartError='';event(s,'cart_quantity',id)}catch(err){cartError=err.message;cartErrorId=id}save();render();const input=app.querySelector('[data-qty="'+CSS.escape(id)+'"]');const group=input?.closest('.ck-quantity');const step=group?.querySelector('[data-delta="'+delta+'"]:not(:disabled)')||group?.querySelector('button:not(:disabled)');(delta&&!cartError?(step||input?.closest('.ck-line')):input)?.focus({preventScroll:true});input?.setAttribute('aria-invalid',cartError?'true':'false');if(cartError)input?.setAttribute('aria-describedby','cart-error')}
 function focusCheckout(){const h=app.querySelector('#checkout-error')||app.querySelector('#checkout-stage-title');h?.focus({preventScroll:true});h?.scrollIntoView({block:'nearest'})}
 function bindCheckout(){
@@ -199,7 +196,7 @@ function bind(){
  },sectorComboOptions(app.querySelector('[data-combo-root]')?.dataset.comboSection));
  bindBranchGallery(app);
  bindMaintenanceTabs(app,(href,brand)=>{const top=scrollY;history.replaceState(history.state,'',href);render();app.querySelector('[data-service-brand="'+brand+'"]').focus({preventScroll:true});window.scrollTo({top,behavior:'instant'})});
- disposeNavigation=bindNavigation(app,s);disposeMoto=bindMotoCarousel(app);disposeParts=app.querySelector('[data-moto-journey]')?()=>{}:bindPartsCarousel(app);disposeJourney=bindMotoJourney(app,s,{enhanceParts:root=>{bindProductActions(root);bindSignals(root)},onBranch:id=>{selectBranch(s,id);save()},onFinance:()=>motoFinance.update(app,route())});disposeFocus=bindMotoFocus(app);disposeLenders=bindLenders(app);
+ disposeNavigation=bindNavigation(app,s);disposeParts=app.querySelector('[data-moto-journey]')?()=>{}:bindPartsCarousel(app);disposeJourney=bindMotoJourney(app,s,{enhanceParts:root=>{bindProductActions(root);bindSignals(root)},onBranch:id=>{selectBranch(s,id);save()},onFinance:()=>motoFinance.update(app,route())});disposeFocus=bindMotoFocus(app);disposeLenders=bindLenders(app);
  const branchFilters=app.querySelector('#branch-filters');
  if(branchFilters){branchFilters.onsubmit=ev=>{ev.preventDefault();const next=branchQuery(route().q),data=new FormData(branchFilters);for(const key of ['q','ciudad'])next.set(key,String(data.get(key)||''));location.hash=branchesHref(next).slice(1)};branchFilters.querySelector('[name=ciudad]').onchange=()=>branchFilters.requestSubmit()}
  app.querySelectorAll('[data-select-branch]').forEach(b=>b.onclick=safe(()=>{if(selectBranch(s,b.dataset.selectBranch)){save();render();toast('Sucursal elegida para tu recorrido demo.')}}));
@@ -263,7 +260,7 @@ function bind(){
  app.querySelector('.receipt-table-scroll')?.addEventListener('keydown',ev=>{if(['ArrowLeft','ArrowRight'].includes(ev.key)){ev.preventDefault();ev.currentTarget.scrollBy({left:ev.key==='ArrowRight'?220:-220,behavior:'instant'})}});
  const branchParam=route().q.get('branch');if(branchParam&&app.querySelector('#consult'))app.querySelector('#consult select').value=branchParam;
 }
-function render(){disposeMobilePanels();disposeTvShowcase();disposeTech();disposeHogar();disposeJourney();disposeSearch();disposeHomeCategories();disposeGardenShowroom();disposeHomeShowroom();disposeCombinations();disposeNavigation();campaignController?.destroy();disposeMoto();disposeParts();disposeFocus();disposeLenders();const active=document.activeElement;const key=['data-service-brand','data-select-branch','data-compare','data-favorite','data-qty','data-add','data-part','data-quick','data-zoom','data-guide-step','id'].find(k=>active?.hasAttribute(k));const focus=key?`[${key}="${CSS.escape(active.getAttribute(key))}"]`:null;document.title='Fussetti · '+({taller:'Taller oficial',services:'Services Oficiales',sucursales:'Sucursales',sucursal:s.branches.find(b=>b.id===route().path[1])?.title||'Sucursal',electrodomesticos:'Electrodomésticos · Para vivir mejor',tecnologia:'Tecnología · Más cerca','tv-audio':'TV y audio · Tu próximo plan',hogar:'Hogar · Tu casa, más vos',inicio:'Elegir bien, vivir mejor',cyber:'CYBER FUSSETTI!',motos:'Motos · Honda','motos-focus':'Motos en primer plano',guia:'Ayudame a elegir',resultados:'Tus opciones',comparar:'Comparar productos',buscar:'Resultados de búsqueda',carrito:'Tu carrito',checkout:'Tu compra',cuenta:'Tu espacio','mis-productos':'Mis productos','mi-producto':'Mi producto','mis-comprobantes':'Mis comprobantes',comprobante:'Comprobante demo'}[route().path[0]]||'Descubrí y elegí');const dealership=isMotoExperience(s,route());applyInterfaceScale(dealership);app.innerHTML=campaignHeader(s,route().path[0],header(),campaignState)+(!dealership||s.compare.every(id=>product(s,id)?.type==='motorcycle')?comparisonRail(s,route().path[0]):'')+`<main id="contenido" class="${dealership?'moto-content':''}" tabindex="-1">${currentPage()}</main>`+footer();bind();campaignController=bindCampaign(app.querySelector('.campaign-carousel'),campaignState);motoFinance.update(app,route());if(partsScrollResults){partsScrollResults=false;requestAnimationFrame(()=>{const target=app.querySelector('#parts-results');target?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});target?.focus({preventScroll:true})})}else if(focus)app.querySelector(focus)?.focus({preventScroll:true})}
+function render(){disposeMobilePanels();disposeTvShowcase();disposeTech();disposeHogar();disposeJourney();disposeSearch();disposeHomeCategories();disposeGardenShowroom();disposeHomeShowroom();disposeCombinations();disposeNavigation();campaignController?.destroy();disposeParts();disposeFocus();disposeLenders();const active=document.activeElement;const key=['data-service-brand','data-select-branch','data-compare','data-favorite','data-qty','data-add','data-part','data-quick','data-zoom','data-guide-step','id'].find(k=>active?.hasAttribute(k));const focus=key?`[${key}="${CSS.escape(active.getAttribute(key))}"]`:null;document.title='Fussetti · '+({taller:'Taller oficial',services:'Services Oficiales',sucursales:'Sucursales',sucursal:s.branches.find(b=>b.id===route().path[1])?.title||'Sucursal',electrodomesticos:'Electrodomésticos · Para vivir mejor',tecnologia:'Tecnología · Más cerca','tv-audio':'TV y audio · Tu próximo plan',hogar:'Hogar · Tu casa, más vos',inicio:'Elegir bien, vivir mejor',cyber:'CYBER FUSSETTI!',motos:'Motos · Honda','motos-focus':'Motos en primer plano',guia:'Ayudame a elegir',resultados:'Tus opciones',comparar:'Comparar productos',buscar:'Resultados de búsqueda',carrito:'Tu carrito',checkout:'Tu compra',cuenta:'Tu espacio','mis-productos':'Mis productos','mi-producto':'Mi producto','mis-comprobantes':'Mis comprobantes',comprobante:'Comprobante demo'}[route().path[0]]||'Descubrí y elegí');const dealership=isMotoExperience(s,route());applyInterfaceScale(dealership);app.innerHTML=campaignHeader(s,route().path[0],header(),campaignState)+(!dealership||s.compare.every(id=>product(s,id)?.type==='motorcycle')?comparisonRail(s,route().path[0]):'')+`<main id="contenido" class="${dealership?'moto-content':''}" tabindex="-1">${currentPage()}</main>`+footer();bind();campaignController=bindCampaign(app.querySelector('.campaign-carousel'),campaignState);motoFinance.update(app,route());if(partsScrollResults){partsScrollResults=false;requestAnimationFrame(()=>{const target=app.querySelector('#parts-results');target?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});target?.focus({preventScroll:true})})}else if(focus)app.querySelector(focus)?.focus({preventScroll:true})}
 document.querySelector('.skip').addEventListener('click',ev=>{ev.preventDefault();const main=document.querySelector('#contenido');main.focus();main.scrollIntoView({block:'start'})});
 let previous=route().path[0];window.addEventListener('hashchange',()=>{const r=route();if(r.path[0]==='inicio'){location.replace('../');return}enterGuide();if(r.path[0]==='guia'&&previous!=='guia')event(s,'guide_start',s.guide.type);if(r.path[0]==='producto'&&previous==='resultados')event(s,'recommendation_open',r.path[1]||'');if(r.path[0]==='checkout'&&previous!=='checkout'){checkoutError='';event(s,'checkout_start')}if(r.path[0]!=='carrito')cartError='';if(r.path[0]==='comparar')event(s,'comparison_view');previous=r.path[0];save();render();document.querySelector('#contenido').focus({preventScroll:true});window.scrollTo({top:0});revealRoute();});window.addEventListener('alternative-update',render);if(previous==='inicio'){location.replace('../')}else{enterGuide();render();revealRoute()}
 
@@ -271,5 +268,3 @@ const shoppingDialog=document.querySelector('#shopping-dialog');
 shoppingDialog.addEventListener('click',ev=>{if(ev.target===shoppingDialog){const r=shoppingDialog.getBoundingClientRect();if(ev.clientX<r.left||ev.clientX>r.right||ev.clientY<r.top||ev.clientY>r.bottom)shoppingDialog.close()}});
 shoppingDialog.addEventListener('close',()=>{if(shoppingSearchContext){const context=shoppingSearchContext;shoppingSearchContext=null;disposeSearch.resume?.(context)}else if(route().path[0]!=='checkout'){if(shoppingReturnSelector)app.querySelector(shoppingReturnSelector)?.focus({preventScroll:true})}});
 window.addEventListener('hashchange',()=>{shoppingDialog.close();document.querySelector('#part-dialog').close()});
-
-watchMotoPresentation(motoPhone,route,()=>{const hero=app.querySelector('.moto-carousel,[data-moto-focus]'),restore=hero?.contains(document.activeElement);render();if(restore)app.querySelector('.moto-carousel-window,.mf-moto-stage')?.focus({preventScroll:true})});

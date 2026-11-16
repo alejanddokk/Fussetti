@@ -1,8 +1,7 @@
-import { createGallery, productShot } from "./gallery.js?v=deslizamiento1";
+import { createGallery, productShot } from "./gallery.js?v=vitrina1";
 
 const shop = "./alternativa/";
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
-const desktopPointer = matchMedia("(pointer: fine) and (min-width: 741px)");
 
 const pieces = [
   { scene: "wave", category: "Motos", title: "Honda Wave 110 S", description: "Tu próximo camino.", image: "wave-110-transparent.webp", route: "#producto/honda-wave-110-s" },
@@ -18,8 +17,8 @@ const departments = [
   ["Electrodomésticos", "#electrodomesticos", "electro.jpg"],
   ["Tecnología", "#tecnologia", "tecno.jpg"],
   ["TV y audio", "#tv-audio", "audio.png"],
-  ["Climatización", "#catalogo?cat=Climatizaci%C3%B3n"],
-  ["Jardín", "#catalogo?cat=Jard%C3%ADn"],
+  ["Climatización", "#catalogo?cat=Climatizaci%C3%B3n", "rca.jpg"],
+  ["Jardín", "#catalogo?cat=Jard%C3%ADn", "https://www.fussetti.com/16350-large_default/fogonero-tromen-duomo-800.jpg"],
   ["Motos", "#motos-focus", "wave-110-transparent.webp"],
   ["Repuestos", "#catalogo?cat=Repuestos", "motul.webp"]
 ];
@@ -39,23 +38,43 @@ for (const index of [2, 4, 5, 3]) {
 }
 
 const departmentList = document.querySelector("#department-list");
-for (const [title, route, image] of departments) {
+const preview = document.querySelector(".directory-preview");
+const previewPhoto = document.querySelector("#department-photo");
+const previewLabel = document.querySelector("#department-photo-label");
+let activeDepartment;
+let previewAnimation;
+const departmentLinks = departments.map(([title, route]) => {
   const link = document.createElement("a");
-  link.className = image ? "department reveal" : "department compact reveal";
+  link.className = "directory-link reveal";
   link.href = shop + route;
-  if (image) {
-    const photo = document.createElement("div");
-    photo.className = "department-media";
-    const scene = title === "Motos" ? "wave" : title === "Repuestos" ? "motul" : image.split(".")[0];
-    photo.innerHTML = productShot({ scene, image });
-    link.append(photo);
+  link.innerHTML = `<span>${title}</span><span aria-hidden="true">↗</span>`;
+  return link;
+});
+
+function showDepartment(index) {
+  if (activeDepartment === index) return;
+  activeDepartment = index;
+  const [title, , image] = departments[index];
+  const scene = { Motos: "wave", Repuestos: "motul", Jardín: "garden" }[title] || image.split(".")[0];
+  preview.dataset.department = scene;
+  previewLabel.textContent = title;
+  previewPhoto.innerHTML = productShot({ scene, image }, "", "eager");
+  departmentLinks.forEach((link, i) => { link.dataset.preview = String(i === index); });
+  if (!reduceMotion.matches) {
+    previewAnimation?.cancel();
+    previewAnimation = previewPhoto.animate(
+      [{ opacity: .25, translate: "12px 0" }, { opacity: 1, translate: "0 0" }],
+      { duration: 460, easing: "cubic-bezier(.18,.68,.3,1)" }
+    );
   }
-  const text = document.createElement("span");
-  text.className = "department-label";
-  text.innerHTML = `<span>${title}</span><span aria-hidden="true">↗</span>`;
-  link.append(text);
-  departmentList.append(link);
 }
+
+departmentLinks.forEach((link, index) => {
+  link.addEventListener("pointerenter", () => showDepartment(index));
+  link.addEventListener("focus", () => showDepartment(index));
+});
+departmentList.append(...departmentLinks);
+showDepartment(0);
 
 createGallery(pieces, shop, reduceMotion);
 
@@ -92,7 +111,7 @@ document.addEventListener("keydown", event => {
 });
 
 if (!reduceMotion.matches) {
-  for (const heading of document.querySelectorAll(".section-head h2, .campaign-head h2, .support h2")) {
+  for (const heading of document.querySelectorAll(".section-heading h2, .road h2, .support h2")) {
     const lines = heading.innerHTML.split(/<br\s*\/?\s*>/i);
     heading.replaceChildren(...lines.flatMap((line, index) => {
       const crop = document.createElement("span");
@@ -112,12 +131,12 @@ if (!reduceMotion.matches) {
       if (reduceMotion.matches) continue;
       const heading = target.querySelectorAll(".title-slice > span");
       const copy = target.querySelectorAll(
-        ".eyebrow, :scope > p, .campaign-head > div > p, .campaign-head .action, .support-copy, .support-links a, " +
-        ".offer-meta > *, .department-label, .ads-head h3, .ad-note, .gallery-identity > h3, .gallery-identity > p:last-child, .collection-foot a"
+        ".eyebrow, :scope > p, .road-copy .action, .support-links a, " +
+        ".offer-meta > *, .ads-head h3, .ad-note"
       );
       if (heading.length) {
         heading.forEach((line, index) => {
-          const from = target.classList.contains("campaign-head") ? "translate(-4%,106%)" : "translateY(106%)";
+          const from = "translateY(106%)";
           line.animate([{ transform: from }, { transform: "translate(0,0)" }], {
             duration: 770, delay: 74 + index * 95, easing: ease, fill: "backwards"
           });
@@ -126,7 +145,7 @@ if (!reduceMotion.matches) {
         target.animate([{ opacity: .38, transform: "translateY(17px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 650, easing: ease });
       }
       copy.forEach((element, index) => {
-        const side = element.matches(".department-label, .support-links a");
+        const side = element.matches(".support-links a");
         const transform = side ? "translateX(-12px)" : "translateY(11px)";
         element.animate([{ opacity: .12, transform }, { opacity: 1, transform: "none" }], {
           duration: 520, delay: Math.min(index * 47, 235) + (heading.length && index > 0 ? 105 : 0), easing: ease, fill: "backwards"
@@ -134,21 +153,8 @@ if (!reduceMotion.matches) {
       });
     }
   }, { threshold: .12 });
-  document.querySelectorAll(".reveal, .gallery-caption, .collection-foot, .footer-top, .footer-bottom").forEach(element => reveals.observe(element));
+  document.querySelectorAll(".reveal, .footer-top, .footer-bottom").forEach(element => reveals.observe(element));
 }
-const hero = document.querySelector(".hero");
-const heroObject = document.querySelector(".hero-object");
-hero.addEventListener("pointermove", event => {
-  if (!desktopPointer.matches || reduceMotion.matches) return;
-  const bounds = hero.getBoundingClientRect();
-  heroObject.style.setProperty("--mx", ((event.clientX - bounds.left) / bounds.width - .5) * 55 + "px");
-  heroObject.style.setProperty("--my", ((event.clientY - bounds.top) / bounds.height - .5) * 33 + "px");
-});
-hero.addEventListener("pointerleave", () => {
-  heroObject.style.removeProperty("--mx");
-  heroObject.style.removeProperty("--my");
-});
-
 const searchDialog = document.querySelector("#catalog-search");
 let searchReturn;
 document.querySelectorAll("[data-search-open]").forEach(link => link.addEventListener("click", event => {

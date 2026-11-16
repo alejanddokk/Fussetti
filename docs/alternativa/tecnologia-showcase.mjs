@@ -4,7 +4,7 @@ import {initialOfficialStock} from './official-commerce.mjs';
 import {classifyOfficial} from './official-taxonomy.mjs';
 import {buyButton} from './product-views.mjs';
 import {combinationMoney} from './hogar-combo-views.mjs';
-import {bindHomeShowroom} from './hogar-showroom-motion.mjs?v=deslizamiento1';
+import {bindHomeShowroom} from './hogar-showroom-motion.mjs?v=vitrina1';
 import {bestPose} from './hogar-mas-vendidos.mjs';
 import {e,icon} from '../nueva/ui.mjs';
 
@@ -33,4 +33,4 @@ export function techCategories(rows){
  const copy={celulares:['Siempre con vos.','Celulares para comparar memoria y precio.'],computacion:['Dale lugar a tus ideas.','Notebooks y tablets para tu próximo equipo.'],gaming:['Entrá en juego.','Consolas y accesorios para explorar.'],trabajo:['Armá tu espacio.','Monitores, impresoras y sillas para elegir.'],conectados:['Más formas de conectar.','Relojes y cámaras del catálogo.'],accesorios:['El detalle que faltaba.','Teclados, mouse y accesorios.']};
  return `<section class="container tf-categories" aria-labelledby="tech-categories-title"><div class="tf-section-heading"><div><p class="eyebrow">EMPEZÁ POR TUS GANAS</p><h2 id="tech-categories-title">¿Qué querés hacer hoy?</h2></div><a class="text-link" href="${e(sectorHref('tecnologia'))}">Ver toda Tecnología ${icon('arrow',16)}</a></div><div class="tf-category-grid">${sectors.tecnologia.collections.map((c,i)=>{const group=sectorSelection(rows,'tecnologia',c.id);if(!group.length)return '';const row=group.find(r=>r.id_oficial===c.image)||group[0];return `<a class="tf-category tf-category-${i}" href="${e(sectorHref('tecnologia',c.id))}"><div class="tf-category-copy"><small>${e(c.title)} · ${group.length} productos</small><h3>${e(copy[c.id][0])}</h3><p>${e(copy[c.id][1])}</p><b>Explorar ${icon('arrow',17)}</b></div><img src="${e(techPhoto(row))}" alt="" loading="lazy"></a>`}).join('')}</div></section>`;
 }
-export const bindTechShowcase=host=>bindHomeShowroom(host,{prefix:'tech',ui:techUi,pose:bestPose,heading:'h2',scrollSelector:true,pauseSummaryHover:true});
+export const bindTechShowcase=host=>bindHomeShowroom(host,{prefix:'tech',ui:techUi,pose:bestPose,heading:'h2',scrollSelector:true});

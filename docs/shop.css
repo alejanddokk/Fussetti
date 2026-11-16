@@ -250,3 +250,62 @@ body { background: var(--scene-paper); }
 @media (max-width:800px) {
   #app .moto-parts-arrows .moto-rotation { min-height:44px; }
 }
+/* Match the store to the new paper and wine palette of the front room. */
+:root { --scene-paper:#f8f3eb; --scene-rule:#ded0c2; }
+#app .demo-bar,.scene-return { background:#4a2629; }
+#app .discovery-header, #app .discovery-header .masthead { color:#342626; background:#faf6ee; border-color:#dfd1c6; }
+#app .discovery-header .brand img { filter:brightness(0) saturate(100%) invert(10%) sepia(99%) saturate(5280%) hue-rotate(357deg) brightness(77%) contrast(116%); }
+#app .discovery-header .brand span, #app .discovery-header .head-icon, #app .discovery-header .navigation-mobile-toggle { color:#462b2c; }
+#app .discovery-header .masthead .search { border:1px solid #cbb8a9; background:#fffaf3; }
+#app .discovery-header .masthead .search input { background:#fffaf3; }
+#app .discovery-header .masthead .search button { background:#a60303; }
+#app .discovery-header .main-nav { color:#452729; border-color:#dbcabb; }
+#app .discovery-header .main-nav a, #app .discovery-header .main-nav a:hover, #app .discovery-header .main-nav button { color:#541b1e; }
+#app .discovery-header .main-nav a[aria-current="page"], #app .discovery-header .main-nav .nav-offers { color:#a60303; }
+#app .discovery-header .main-nav :is(a,button):focus-visible { outline-color:#a60303; }
+#app .discovery-header .navigation-categories { background:#efe3d8; border-color:#d8c6b9; }
+#app .discovery-header .main-nav > .nav-guide { color:#fff; background:#a60303; border-color:#a60303; }
+#app .catalog-page .product-media { background:radial-gradient(ellipse at 46% 35%,#fffaf4,#eadbcd 99%); }
+#app .catalog-page .product-card:hover { box-shadow:0 14px 34px #53272121; }
+
+#app .mf-motos { background:linear-gradient(140deg,#f8efe4,#f3e4d8 75%,#f8efe4); border-bottom:1px solid #ddc8b9; }
+#app .mf-moto-branding { padding-block:19px 11px; }
+#app .mf-moto-intro { padding-block:8px 13px; gap:10px; }
+#app .mf-moto-intro > h1 { color:#462123; font:800 clamp(28px,5.3vw,70px)/.98 var(--scene-heading); letter-spacing:-.075em; }
+#app .mf-moto-stage {
+  width:min(calc(100% - 52px),1440px); margin-inline:auto; height:clamp(312px,36vw,518px);
+  background:linear-gradient(150deg,#ecdcca,#d1b1a8 94%); border:1px solid #ceb2a3; isolation:isolate;
+}
+#app .mf-moto-stage::before {
+  display:block; content:""; position:absolute; z-index:-1; inset:8% 27% -15%;
+  border-radius:48% 48% 0 0; border:1px solid #81504a4c;
+  background:radial-gradient(ellipse at 50% 33%,#fff0dd,#e5c5b75e 52%,transparent 73%); mask-image:none;
+}
+#app .mf-moto-bike { height:75%; top:10%; }
+#app .mf-moto-details { padding-block:8px; }
+#app .mf-moto-count { position:absolute; top:10px; left:10px; z-index:480; display:flex; align-items:center; gap:4px; padding:7px 8px; background:#fffaf0; color:#512223; border:1px solid #bf9383; font-size:11px; }
+#app .mf-moto-count [data-focus-label] { display:none; }
+#app .mf-moto-arrows { inset:0 11px; }
+#app .mf-moto-selector { scrollbar-width:thin; scrollbar-color:#b28575 #efdfd3; scroll-padding-inline:5px; }
+#app .mf-moto-selector > button { border-radius:0; }
+#app .mf-moto-selector > button[aria-current="true"] { background:#fff6e8; }
+#app .moto-parts-track { scrollbar-color:#b28575 #efdfd3; }
+@media(max-width:767px) {
+ #app .mf-moto-stage { width:calc(100% - 28px); height:clamp(228px,68vw,356px); }
+ #app .mf-moto-stage::before { inset:10% 19% -12%; }
+ #app .mf-moto-bike { width:min(86vw,625px); top:10%; height:75%; }
+ #app .mf-moto-intro > h1 { font-size:clamp(27px,8vw,49px); line-height:.98; }
+ #app .mf-moto-intro > .moto-rotation { flex:none; }
+ #app .mf-moto-count { top:6px; left:6px; }
+ #app .mf-moto-summary { padding-block:11px 15px; }
+}
+#app .mf-moto-intro > h1 { letter-spacing:-.065em; word-spacing:.03em; }
+#app .mf-moto-branding > a > img { filter:brightness(0) saturate(100%) invert(10%) sepia(99%) saturate(5280%) hue-rotate(357deg) brightness(77%) contrast(116%); }
+#app .mf-moto-selector,#app .moto-parts-track { scrollbar-width:none; }
+#app .mf-moto-selector::-webkit-scrollbar,#app .moto-parts-track::-webkit-scrollbar { display:none; }
+#app .moto-parts-bottom { position:relative; padding-top:16px; }
+#app .moto-parts-bottom::before, #app .moto-parts-bottom::after {
+ position:absolute; content:""; height:2px; top:1px; left:0; pointer-events:none;
+}
+#app .moto-parts-bottom::before { width:100%; background:#e4cbbd; }
+#app .moto-parts-bottom::after { width:var(--parts-thumb,100%); left:var(--parts-offset,0%); background:#a60303; }

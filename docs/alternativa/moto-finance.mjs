@@ -3,8 +3,8 @@ import {LENDERS} from './moto-lenders.mjs?v=credit-options1';
    See references/horizonx/motion-focus.html. Native, readable, manual carousels. */
 import {e,icon} from '../nueva/ui.mjs';
 import {money,unitPrice} from './domain.mjs';
-import {showroomModels,motoName,motoPhoto} from './moto-showroom.mjs?v=deslizamiento1';
-import {focusFrames} from './moto-focus.mjs?v=deslizamiento1';
+import {showroomModels,motoName,motoPhoto} from './moto-showroom.mjs?v=vitrina1';
+import {focusFrames} from './moto-focus.mjs?v=vitrina1';
 
 export function financeRoute(r){
  const page=r.path[0],q=r.q;
@@ -26,7 +26,7 @@ export function salesMessage(p,intent='finance',lenderId=''){
 }
 export const salesHref=(p,intent='finance',lenderId='')=>'https://wa.me/'+MOTO_SALES_PHONE+'?text='+encodeURIComponent(salesMessage(p,intent,lenderId));
 const whatsappIcon='<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M20.5 11.7a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.3-4.8a8.5 8.5 0 1 1 16.2-4Z"/><path d="M8.1 7.6c-.6.2-.8 1-.6 1.8.7 2.8 3.4 5.4 6 6 .9.2 1.8-.3 2-1l-2.1-1.3-.9.9c-1.5-.7-2.5-1.7-3.2-3.2l.8-.9-1.3-2.3Z"/></svg>';
-function creditPhoto(p){const f=focusFrames[p.id],src=e(f?.src||motoPhoto(p));return f?`<svg viewBox="${f.box.join(' ')}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${e(p.name)}"><image href="${src}" width="${f.size[0]}" height="${f.size[1]}"/></svg>`:`<img src="${src}" alt="${e(p.name)}">`}
+function creditPhoto(p){return `<img src="${e(focusFrames[p.id]||motoPhoto(p))}" alt="${e(p.name)}">`}
 export function financeView(s,selectedId='',intent='finance',lenderId=''){
  const models=showroomModels(s),p=models.find(p=>p.id===selectedId)||models[0];
  const selectedIntent=CONTACT_INTENTS.some(x=>x.id===intent)?intent:'finance';

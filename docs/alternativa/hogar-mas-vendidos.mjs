@@ -3,7 +3,7 @@ import {initialOfficialStock} from './official-commerce.mjs';
 import {classifyOfficial} from './official-taxonomy.mjs';
 import {buyButton} from './product-views.mjs';
 import {combinationMoney} from './hogar-combo-views.mjs';
-import {bindHomeShowroom} from './hogar-showroom-motion.mjs?v=deslizamiento1';
+import {bindHomeShowroom} from './hogar-showroom-motion.mjs?v=vitrina1';
 import {gardenPose} from './garden-showroom.mjs';
 import {collectionHref} from './hogar-model.mjs';
 import {e,icon} from '../nueva/ui.mjs';
@@ -43,4 +43,4 @@ export function bestGroupView(s,rows,group){
 }
 export function bestShowrooms(s,rows){return `<div class="container best-intro"><p class="eyebrow">UNA SELECCIÓN DE FUSSETTI</p><h2>Los más elegidos para tu hogar.</h2><p>Selección basada en el orden de ventas publicado por Fussetti al 4/11/2026. El listado puede cambiar y no informa período ni unidades.</p></div>${bestGroups.map(g=>bestGroupView(s,rows,g)).join('')}`}
 export function bestPose(offset,width){const p=gardenPose(offset,width);if(width<700){p.x=offset*Math.max(155,width*.46);if(Math.abs(offset)>.25)p.opacity*=.72}return p}
-export function bindBestShowrooms(host){const disposers=bestGroups.map(g=>bindHomeShowroom(host,{prefix:g.key,ui:bestUi[g.key],pose:bestPose,heading:'h3',scrollSelector:true,pauseSummaryHover:true}));return ()=>disposers.forEach(fn=>fn())}
+export function bindBestShowrooms(host){const disposers=bestGroups.map(g=>bindHomeShowroom(host,{prefix:g.key,ui:bestUi[g.key],pose:bestPose,heading:'h3',scrollSelector:true}));return ()=>disposers.forEach(fn=>fn())}
